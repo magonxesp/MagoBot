@@ -46,7 +46,7 @@ def send_welcome(bot, update):
 
 
 def roll(bot, update):
-    max_random_value = 1000
+    max_random_value = 100
     arg = get_message_arg(update.message.text)
 
     if arg.isnumeric():
