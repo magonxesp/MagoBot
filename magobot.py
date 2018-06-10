@@ -32,16 +32,6 @@ def get_message_arg(message_text):
     return arg
 
 
-def is_group(chat):
-    members = chat.get_chat_members_count()
-    admins = len(chat.get_administrators())
-
-    if members > 1 and admins > 1:
-        return True
-    else:
-        return False
-
-
 def send(bot, update, message_text, no_reply_in_group=False, mention_user=False):
     chat = update.message.chat
     message = update.message
