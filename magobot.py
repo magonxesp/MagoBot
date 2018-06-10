@@ -1,4 +1,6 @@
 from telegram.ext import Updater, CommandHandler
+from telegram.chat import Chat
+from telegram.parsemode import ParseMode
 import rule34
 import random
 import sys
@@ -30,19 +32,49 @@ def get_message_arg(message_text):
     return arg
 
 
+def is_group(chat):
+    members = chat.get_chat_members_count()
+    admins = len(chat.get_administrators())
+
+    if members > 1 and admins > 1:
+        return True
+    else:
+        return False
+
+
+def send(bot, update, message_text, no_reply_in_group=False, mention_user=False):
+    chat = update.message.chat
+    message = update.message
+
+    if chat.type == Chat.GROUP or chat.type == Chat.SUPERGROUP:
+        if no_reply_in_group:
+            bot.send_message(chat_id=chat.id, text=message_text)
+        else:
+            if mention_user:
+                user = message.from_user
+                markdown = "[@{}](tg://user?id={}) " + message_text
+                message_text = markdown.format(user.username, user.id)
+                bot.send_message(chat_id=chat.id, text=message_text, parse_mode=ParseMode.MARKDOWN)
+            else:
+                bot.send_message(chat_id=chat.id, text=message_text, reply_to_message_id=message.message_id)
+    else:
+        bot.send_message(chat.id, message_text)
+
+
 def send_rule34(bot, update):
     arg = get_message_arg(update.message.text)
     bot.send_sticker(update.message.chat_id, "CAADAwAD0RAAAsKphwW8SGCoG75C8AI")  # sticker de kanna buscando
     image_url = get_rule34_post(arg)
 
     if image_url is not None:
-        bot.send_message(update.message.chat_id, image_url)
+        send(bot, update, image_url)
     else:
-        bot.send_message(update.message.chat_id, "Prueba con otra cosa...")
+        send(bot, update, "Prueba con otra cosa...")
 
 
 def send_welcome(bot, update):
-    bot.send_message(update.message.chat_id, "Hola k ase")
+    # envia el saludo y si el usuario esta en un grupo o supergrupo lo menciona
+    send(bot, update, "Hola k ase", mention_user=True)
 
 
 def roll(bot, update):
@@ -53,7 +85,7 @@ def roll(bot, update):
         max_random_value = int(arg)
 
     value = random.randint(0, max_random_value)
-    bot.send_message(chat_id=update.message.chat_id, text=value, reply_to_message_id=update.message.message_id)
+    send(bot, update, value)
 
 
 # crea el updater del bot mediante el token del bot
