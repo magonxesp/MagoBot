@@ -1,5 +1,5 @@
 from telegram import Chat, ParseMode
-
+import random
 
 def get_message_arg(message_text):
     message_array = message_text.split(' ')[1:]
@@ -29,3 +29,8 @@ def send(bot, update, message_text, no_reply_in_group=False, mention_user=False)
                 bot.send_message(chat_id=chat.id, text=message_text, reply_to_message_id=message.message_id)
     else:
         bot.send_message(chat.id, message_text)
+
+
+def random_element(array):
+    index = random.randint(0, len(array) - 1)
+    return array[index]
