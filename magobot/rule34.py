@@ -1,6 +1,5 @@
-from .helper import get_message_arg, send
+from .helper import get_message_arg, send, random_element
 import rule34
-import random
 import sys
 
 
@@ -9,8 +8,7 @@ def get_rule34_post(tag):
         images_urls = rule34.getImageURLS(tag)
 
         if images_urls is not None:
-            index = random.randint(0, len(images_urls))
-            return images_urls[index]
+            return random_element(images_urls)
         else:
             return None
     except rule34.Request_Rejected or rule34.Rule34_Error:
