@@ -1,1 +1,1 @@
-worker python magobot.py
+worker python -m magobot
