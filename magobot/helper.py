@@ -1,6 +1,7 @@
 from telegram import Chat, ParseMode
 import random
 
+
 def get_message_arg(message_text):
     message_array = message_text.split(' ')[1:]
 
