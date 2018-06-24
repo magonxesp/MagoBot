@@ -1,3 +1,4 @@
 python-telegram-bot
 rule34
 basc-py4chan
+urllib3
