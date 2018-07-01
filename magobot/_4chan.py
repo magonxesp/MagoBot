@@ -46,3 +46,9 @@ def send_4chan_ecchi(bot, update):
     thread = random_thread(get_threads('e'))
     files = generator_to_array(thread.files())
     send(bot, update, random_element(files))
+
+
+def send_4chan_hentai(bot, update):
+    thread = random_thread(get_threads('h'))
+    files = generator_to_array(thread.files())
+    send(bot, update, random_element(files))
