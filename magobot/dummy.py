@@ -1,4 +1,4 @@
-from .helper import send, get_message_arg
+from magobot.helper import send, get_message_arg
 import random
 
 

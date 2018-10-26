@@ -1,4 +1,4 @@
-from .helper import send, random_element
+from magobot.helper import send, random_element
 from basc_py4chan import Board
 from basc_py4chan import Thread
 

@@ -1,4 +1,4 @@
-from .helper import get_message_arg, send, random_element
+from magobot.helper import get_message_arg, send, random_element
 from xml.dom import minidom
 from urllib3 import PoolManager
 from urllib3.exceptions import InsecureRequestWarning
