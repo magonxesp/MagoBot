@@ -13,25 +13,6 @@ class MagoBot(object):
     def start(self):
         self.__updater.start_polling()
         self.__updater.idle()
-    """
-    def __send_response(self, bot, update, message_text, no_reply_in_group=False, mention_user=False):
-        chat = update.message.chat
-        message = update.message
-
-        if chat.type == Chat.GROUP or chat.type == Chat.SUPERGROUP:
-            if no_reply_in_group:
-                bot.send_message(chat_id=chat.id, text=message_text)
-            else:
-                if mention_user:
-                    user = message.from_user
-                    markdown = "[@{}](tg://user?id={}) " + message_text
-                    message_text = markdown.format(user.username, user.id)
-                    bot.send_message(chat_id=chat.id, text=message_text, parse_mode=ParseMode.MARKDOWN)
-                else:
-                    bot.send_message(chat_id=chat.id, text=message_text, reply_to_message_id=message.message_id)
-        else:
-            bot.send_message(chat.id, message_text)
-    """
 
 
 class Command(CommandHandler):
