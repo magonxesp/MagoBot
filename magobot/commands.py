@@ -12,6 +12,7 @@ import asyncio
 class Start(Command):
 
     _command = 'start'
+    _send_mention = True
 
     def _on_execution(self, args):
         return 'Hola k ase'
