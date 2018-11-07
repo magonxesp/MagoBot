@@ -1,20 +1,17 @@
-from telegram.ext import Updater, CommandHandler
-from magobot.rule34 import send_rule34
-from magobot.dummy import send_welcome, roll
-from magobot._4chan import send_4chan_anime_wallpaper, send_4chan_random, send_4chan_ecchi, send_4chan_hentai
+from magobot.magobot import MagoBot
 from magobot.settings import TOKEN
+import magobot.commands
 
-# crea el updater del bot mediante el token del bot
-updater = Updater(TOKEN)
+bot = MagoBot(TOKEN)
 
-# añade los comandos al bot
-updater.dispatcher.add_handler(CommandHandler('start', send_welcome))
-updater.dispatcher.add_handler(CommandHandler('rule34', send_rule34))
-updater.dispatcher.add_handler(CommandHandler('roll', roll))
-updater.dispatcher.add_handler(CommandHandler('random', send_4chan_random))
-updater.dispatcher.add_handler(CommandHandler('randomw', send_4chan_anime_wallpaper))
-updater.dispatcher.add_handler(CommandHandler('ecchi', send_4chan_ecchi))
-updater.dispatcher.add_handler(CommandHandler('hentai', send_4chan_hentai))
+# Add command listeners
+bot.add_command(magobot.commands.Start())
+bot.add_command(magobot.commands.Roll())
+bot.add_command(magobot.commands.Rule34())
+bot.add_command(magobot.commands.RandomAnimeWallpaper())
+bot.add_command(magobot.commands.RandomBThread())
+bot.add_command(magobot.commands.RandomEcchiThread())
+bot.add_command(magobot.commands.RandomHentaiThread())
 
-updater.start_polling()
-updater.idle()
+# start bot
+bot.start()
