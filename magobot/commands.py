@@ -1,4 +1,4 @@
-from magobot.magobot import Command
+from magobot.magobot import Command, ResponseType
 from xml.dom import minidom
 from urllib3 import PoolManager
 from urllib3.exceptions import InsecureRequestWarning
@@ -12,10 +12,10 @@ import asyncio
 class Start(Command):
 
     _command = 'start'
-    _send_mention = True
 
     def _on_execution(self, args):
-        return 'Hola k ase'
+        self._response.send_mention = True
+        self._response.send(ResponseType.TEXT, 'Hola k ase')
 
 
 class Roll(Command):
@@ -31,7 +31,8 @@ class Roll(Command):
             if arg.isnumeric:
                 _max = int(arg)
 
-        return random.randint(0, _max)
+        number = random.randint(0, _max)
+        self._response.send(ResponseType.TEXT, number)
 
 
 class Rule34(Command):
@@ -54,9 +55,9 @@ class Rule34(Command):
 
         if posts is not False:
             index = random.randint(0, len(posts) - 1)
-            return posts[index]
+            self._response.send(ResponseType.TEXT, posts[index])
         else:
-            return 'Prueba con otra cosa...'
+            self._response.send(ResponseType.TEXT, 'Prueba con otra cosa...')
 
     def __parse_xml(self):
         document = minidom.parseString(self.xml_string)
@@ -145,7 +146,7 @@ class RandomAnimeWallpaper(ChanCommand):
         thread = self.random_thread(threads)
         files = self.generator_to_array(thread.files())
         index = random.randint(0, len(files))
-        return files[index]
+        self._response.send(ResponseType.TEXT, files[index])
 
 
 class RandomBThread(ChanCommand):
@@ -158,7 +159,7 @@ class RandomBThread(ChanCommand):
 
     def _on_execution(self, args):
         thread = self.random_thread(self.get_threads(self._board_id))
-        return thread.url
+        self._response.send(ResponseType.TEXT, thread.url)
 
 
 class RandomHentaiThread(ChanCommand):
@@ -173,7 +174,7 @@ class RandomHentaiThread(ChanCommand):
         thread = self.random_thread(self.get_threads(self._board_id))
         files = self.generator_to_array(thread.files())
         index = random.randint(0, len(files))
-        return files[index]
+        self._response.send(ResponseType.TEXT, files[index])
 
 
 class RandomEcchiThread(ChanCommand):
@@ -188,4 +189,4 @@ class RandomEcchiThread(ChanCommand):
         thread = self.random_thread(self.get_threads(self._board_id))
         files = self.generator_to_array(thread.files())
         index = random.randint(0, len(files))
-        return files[index]
+        self._response.send(ResponseType.TEXT, files[index])
