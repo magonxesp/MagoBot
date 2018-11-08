@@ -7,8 +7,8 @@ class MagoBot(object):
     def __init__(self, token):
         self.__updater = Updater(token)
 
-    def add_command(self, command):
-        self.__updater.dispatcher.add_handler(command)
+    def add_handler(self, handler):
+        self.__updater.dispatcher.add_handler(handler)
 
     def start(self):
         self.__updater.start_polling()
@@ -75,15 +75,19 @@ class Command(CommandHandler):
         raise NotImplementedError()
 
 
-class Answer(RegexHandler):
-
-    pattern = ''
+class MessageResponder(object):
 
     def __init__(self):
-        super().__init__(self.pattern, self.__trigger)
+        self.__handlers = []
+        self.response = ''
 
-    def __trigger(self):
-        pass
+    def __trigger(self, bot, update):
+        response = BotResponse(bot, update)
+        response.send(ResponseType.TEXT, self.response)
 
-    def _on_answer(self):
-        raise NotImplementedError()
+    def add_pattern(self, pattern):
+        handler = RegexHandler(pattern, self.__trigger)
+        self.__handlers.append(handler)
+
+    def get_handlers(self):
+        return self.__handlers
