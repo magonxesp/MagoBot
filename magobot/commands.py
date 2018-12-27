@@ -13,7 +13,7 @@ class Start(Command):
 
     _command = 'start'
 
-    def _on_execution(self, args):
+    def execute(self, args):
         self._response.send_mention = True
         self._response.send(ResponseType.TEXT, 'Hola k ase')
 
@@ -22,7 +22,7 @@ class Roll(Command):
 
     _command = 'roll'
 
-    def _on_execution(self, args):
+    def execute(self, args):
         _max = 100
 
         if len(args) > 0:
@@ -49,7 +49,7 @@ class Rule34(Command):
         self.loop = asyncio.get_event_loop()
         self.loop.set_debug(True)
 
-    def _on_execution(self, args):
+    def execute(self, args):
         self.tags = args[0]
         posts = self.get_posts()
 
@@ -103,7 +103,7 @@ class Rule34(Command):
 
 class ChanCommand(Command):
 
-    def _on_execution(self, args):
+    def execute(self, args):
         raise NotImplementedError()
 
     def generator_to_array(self, generator) -> list:
@@ -141,7 +141,7 @@ class RandomAnimeWallpaper(ChanCommand):
         super().__init__()
         self._board_id = 'w'
 
-    def _on_execution(self, args):
+    def execute(self, args):
         threads = self.get_threads(self._board_id)
         thread = self.random_thread(threads)
         files = self.generator_to_array(thread.files())
@@ -157,7 +157,7 @@ class RandomBThread(ChanCommand):
         super().__init__()
         self._board_id = 'b'
 
-    def _on_execution(self, args):
+    def execute(self, args):
         thread = self.random_thread(self.get_threads(self._board_id))
         self._response.send(ResponseType.TEXT, thread.url)
 
@@ -170,7 +170,7 @@ class RandomHentaiThread(ChanCommand):
         super().__init__()
         self._board_id = 'h'
 
-    def _on_execution(self, args):
+    def execute(self, args):
         thread = self.random_thread(self.get_threads(self._board_id))
         files = self.generator_to_array(thread.files())
         index = random.randint(0, len(files))
@@ -185,7 +185,7 @@ class RandomEcchiThread(ChanCommand):
         super().__init__()
         self._board_id = 'e'
 
-    def _on_execution(self, args):
+    def execute(self, args):
         thread = self.random_thread(self.get_threads(self._board_id))
         files = self.generator_to_array(thread.files())
         index = random.randint(0, len(files))
