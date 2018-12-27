@@ -65,25 +65,35 @@ class Command(CommandHandler):
     _response = None
 
     def __init__(self):
-        super().__init__(self._command, self.__execute, pass_args=True)
+        super().__init__(self._command, self.__on_call, pass_args=True)
 
-    def __execute(self, bot, update, args):
+    def __on_call(self, bot, update, args):
         self._response = BotResponse(bot, update)
-        self._on_execution(args)
+        self.execute(args)
 
-    def _on_execution(self, args):
+    def execute(self, args):
         raise NotImplementedError()
 
+    def get_name(self):
+        return self._command
 
-class MessageResponder(object):
+
+class MessageHandler(object):
 
     def __init__(self):
         self.__handlers = []
+        self.__callbacks = []
         self.response = ''
 
     def __trigger(self, bot, update):
+        for callback in self.__callbacks:
+            callback(update)
+
         response = BotResponse(bot, update)
         response.send(ResponseType.TEXT, self.response)
+
+    def add_trigger_event_callback(self, callback):
+        self.__callbacks.append(callback)
 
     def add_pattern(self, pattern):
         handler = RegexHandler(pattern, self.__trigger)
