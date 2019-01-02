@@ -1,5 +1,6 @@
 from telegram.ext import Updater, CommandHandler, RegexHandler
 from telegram import Chat, ParseMode
+from magobot.token import TextTokenPreprocessor
 
 
 class MagoBot(object):
@@ -71,6 +72,9 @@ class Command(CommandHandler):
         self._response = BotResponse(bot, update)
         self.execute(args)
 
+    def prepare_response(self, bot, update):
+        self._response = BotResponse(bot, update)
+
     def execute(self, args):
         raise NotImplementedError()
 
@@ -79,13 +83,20 @@ class Command(CommandHandler):
 
 
 class MessageHandler(object):
-
+    
     def __init__(self):
         self.__handlers = []
         self.__callbacks = []
         self.response = ''
 
-    def __trigger(self, bot, update):
+    def _trigger(self, bot, update):
+        """
+        :param bot: bot object
+        :type bot: telegram.Bot
+        :param update: message update object
+        :type update: telegram.Update
+        :return: void
+        """
         for callback in self.__callbacks:
             callback(update)
 
@@ -96,8 +107,36 @@ class MessageHandler(object):
         self.__callbacks.append(callback)
 
     def add_pattern(self, pattern):
-        handler = RegexHandler(pattern, self.__trigger)
+        handler = RegexHandler(pattern, self._trigger)
         self.__handlers.append(handler)
 
     def get_handlers(self):
         return self.__handlers
+
+
+class AIMessageHandler(RegexHandler):
+
+    def __init__(self, ai):
+        """
+        :param ai: AI response picker class
+        :type ai: magobot.ai.AIResponse
+        """
+        super().__init__('(.*)', self.__trigger)
+        self.__ai = ai
+
+    def __trigger(self, bot, update):
+        """
+        :param bot: bot object
+        :type bot: telegram.Bot
+        :param update: message update object
+        :type update: telegram.Update
+        :return: void
+        """
+        response = self.__ai.get_response(update.message.text)
+        preprocesor = TextTokenPreprocessor(response, bot=bot, update=update)
+        parsed_response = preprocesor.parse()
+
+        if parsed_response is not None:
+            BotResponse(bot, update).send(ResponseType.TEXT, response)
+
+
