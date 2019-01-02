@@ -1,0 +1,16 @@
+{
+  "intents": [
+    {
+      "tag": "saludo",
+      "patterns": [
+        "Hola!",
+        "Hola",
+        "Hola, que tal",
+        "Hola k ase"
+      ],
+      "responses": [
+        "[command:Start]"
+      ]
+    }
+  ]
+}
