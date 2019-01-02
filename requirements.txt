@@ -3,3 +3,6 @@ rule34
 basc-py4chan
 urllib3
 python-dotenv
+nltk
+tflearn
+tensorflow
