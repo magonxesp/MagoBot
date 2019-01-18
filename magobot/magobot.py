@@ -137,6 +137,6 @@ class AIMessageHandler(RegexHandler):
         parsed_response = preprocesor.parse()
 
         if parsed_response is not None:
-            BotResponse(bot, update).send(ResponseType.TEXT, response)
+            BotResponse(bot, update).send(ResponseType.TEXT, parsed_response)
 
 
