@@ -26,7 +26,7 @@ class Trainer(object):
             os.mkdir(self.__models_path)
 
     def prepare_intents(self, intents_path):
-        with open(intents_path) as json_data:
+        with open(intents_path, encoding="utf-8") as json_data:
             self.intents = json.load(json_data)
 
         for intent in self.intents['intents']:
