@@ -137,7 +137,7 @@ class TextTokenPreprocessor(object):
 
         text = ' '.join(text_words)
 
-        if text is not '':
+        if text != '':
             return text
         else:
             return None

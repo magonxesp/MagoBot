@@ -6,3 +6,4 @@ python-dotenv
 nltk
 tflearn
 tensorflow
+certifi

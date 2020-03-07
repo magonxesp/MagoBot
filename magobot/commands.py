@@ -6,7 +6,7 @@ from urllib3 import disable_warnings
 from basc_py4chan import Board, Thread
 import random
 import rule34
-import asyncio
+# import asyncio
 
 
 class Start(Command):
@@ -46,8 +46,9 @@ class Rule34(Command):
 
     def __init__(self):
         super().__init__()
-        self.loop = asyncio.get_event_loop()
-        self.loop.set_debug(True)
+        self.rule34 = rule34.Sync()
+        # self.loop = asyncio.get_event_loop()
+        # self.loop.set_debug(True)
 
     def execute(self, args):
         self.tags = args[0]
@@ -71,7 +72,7 @@ class Rule34(Command):
         return posts
 
     def __random_page_id(self):
-        total_posts = self.loop.run_until_complete(rule34.Rule34(self.loop).totalImages(self.tags))
+        total_posts = self.rule34.totalImages(self.tags)
         # calcula el numero de paginas dividiendo el total de post por 40 posts por pagina aproximandamente
         total_pages = int(total_posts / 100)
         page = random.randint(0, total_pages)
@@ -97,6 +98,8 @@ class Rule34(Command):
             print(request_exception.message)
         except rule34.Rule34_Error as rule34_exception:
             print(rule34_exception.message)
+        except Exception as e:
+            print(e)
 
         return False
 
