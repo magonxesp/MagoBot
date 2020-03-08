@@ -26,7 +26,7 @@ Requiere python >= 3.7
 1. Crear el virtualenv y activarlo
     ```shell script
     $ pip install virtualenv
-    $ virtualenv env
+    $ virtualenv venv
     $ source venv/bin/activate
     ```
 2. Instalar las dependencias
