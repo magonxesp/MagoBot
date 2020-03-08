@@ -1,5 +1,5 @@
 # MagoBot
-MagoBot, un bot de telegram magico.
+MagoBot, un bot magico para telegram.
 
 Requiere python >= 3.7
 
