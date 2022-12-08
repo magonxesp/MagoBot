@@ -6,4 +6,4 @@ python-dotenv==0.12.0
 nltk==3.4.5
 tflearn==0.3.2
 tensorflow==2.1.0
-certifi==2019.11.28
+certifi==2022.12.7
