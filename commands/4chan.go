@@ -42,26 +42,26 @@ func sendRandomFileThreadOfBoard(board string, bot *tgbotapi.BotAPI, update *tgb
 	return bot.Send(tgbotapi.NewPhotoUpload(update.Message.Chat.ID, post.ImageURL()))
 }
 
-func ChanRandomWThread(bot *tgbotapi.BotAPI, update *tgbotapi.Update) {
+func ChanRandomWThreadCommandHandler(bot *tgbotapi.BotAPI, update *tgbotapi.Update) {
 	if _, err := sendRandomFileThreadOfBoard("w", bot, update); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 }
 
-func ChanRandomBThread(bot *tgbotapi.BotAPI, update *tgbotapi.Update) {
+func ChanRandomBThreadCommandHandler(bot *tgbotapi.BotAPI, update *tgbotapi.Update) {
 	if _, err := sendRandomThreadOfBoard("b", bot, update); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 }
 
-func ChanRandomHentaiThread(bot *tgbotapi.BotAPI, update *tgbotapi.Update) {
+func ChanRandomHentaiThreadCommandHandler(bot *tgbotapi.BotAPI, update *tgbotapi.Update) {
 	if _, err := sendRandomFileThreadOfBoard("h", bot, update); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 }
 
-func ChanRandomEcchiThread(bot *tgbotapi.BotAPI, update *tgbotapi.Update) {
+func ChanRandomEcchiThreadCommandHandler(bot *tgbotapi.BotAPI, update *tgbotapi.Update) {
 	if _, err := sendRandomFileThreadOfBoard("e", bot, update); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 }

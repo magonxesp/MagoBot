@@ -4,17 +4,15 @@ import tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 
 type CommandHandler func(bot *tgbotapi.BotAPI, update *tgbotapi.Update)
 
-var (
-	handlers = map[string]CommandHandler{
-		"start":                   StartCommandHandler,
-		"roll":                    StartCommandHandler,
-		"rule34":                  StartCommandHandler,
-		"4chanrandomwthread":      ChanRandomWThread,
-		"4chanrandombthread":      ChanRandomBThread,
-		"4chanrandomhentaithread": ChanRandomHentaiThread,
-		"4chanrandomecchithread":  ChanRandomEcchiThread,
-	}
-)
+var handlers = map[string]CommandHandler{
+	"start":                   StartCommandHandler,
+	"roll":                    RollCommandHandler,
+	"rule34":                  Rule34CommandHandler,
+	"4chanrandomwthread":      ChanRandomWThreadCommandHandler,
+	"4chanrandombthread":      ChanRandomBThreadCommandHandler,
+	"4chanrandomhentaithread": ChanRandomHentaiThreadCommandHandler,
+	"4chanrandomecchithread":  ChanRandomEcchiThreadCommandHandler,
+}
 
 // HandleCommand Handles an incoming command it returns true if a command is handled or false if not
 func HandleCommand(bot *tgbotapi.BotAPI, update *tgbotapi.Update) bool {
