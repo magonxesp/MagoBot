@@ -43,15 +43,7 @@ func Rule34CommandHandler(bot *tgbotapi.BotAPI, update *tgbotapi.Update) {
 	}
 
 	post := posts[utils.RandomInt(0, len(posts)-1)]
-	bytes, err := utils.GetFileContentFromUrl(post.FileUrl)
-
-	if err != nil {
-		_, err = bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, "Ha ocurrido un error al recuperar la imagen del post aleatorio"))
-		log.Println(err)
-		return
-	}
-
-	_, err = bot.Send(tgbotapi.NewPhotoUpload(update.Message.Chat.ID, tgbotapi.FileBytes{Bytes: bytes}))
+	_, err = bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, post.FileUrl))
 
 	if err != nil {
 		log.Println(err)

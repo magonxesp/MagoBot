@@ -14,6 +14,15 @@ func ThreadUrl(thread *api.Thread) string {
 	)
 }
 
+func PostUrl(post *api.Post) string {
+	return fmt.Sprintf(
+		"https://boards.4channel.org/%s/thread/%d#p%d",
+		post.Thread.Board,
+		post.Thread.Id(),
+		post.Id,
+	)
+}
+
 func RandomThreadFromBoard(board string) (*api.Thread, error) {
 	threads, err := api.GetThreads(board)
 
