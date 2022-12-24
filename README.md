@@ -1,7 +1,7 @@
 # MagoBot
 MagoBot, un bot magico para telegram.
 
-Requiere python >= 3.7
+Requiere Go >= 1.19
 
 ## Instalacion
 1. Clonar este repositorio
@@ -22,19 +22,14 @@ Requiere python >= 3.7
     ```shell script
     $ docker-compose up -d --build
     ```
-### Sin docker, usando virtualenv
-1. Crear el virtualenv y activarlo
+### Sin docker, compilando y ejecutando
+1. Compilar con make
     ```shell script
-    $ pip install virtualenv
-    $ virtualenv venv
-    $ source venv/bin/activate
+    $ make build
     ```
-2. Instalar las dependencias
+
+2. Iniciar el bot
     ```shell script
-    (venv) $ pip install -r requirements.txt
-    ```
-3. Iniciar el bot
-    ```shell script
-    (venv) $ python -m magobot
+    ./build/magobot
     ```
  
