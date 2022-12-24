@@ -1,13 +1,11 @@
-FROM python:3.7
-# create app directory
-RUN mkdir -p /app
-# using app directory
+FROM golang:1.19-alpine
+
 WORKDIR /app
-# copy requirements txr
-COPY requirements.txt requirements.txt
-# install app dependencies
-RUN pip install -r requirements.txt
-# copy all project files
+
+RUN apk add --no-cache make
+
 COPY . .
-# run app
-CMD ["python", "-m", "magobot"]
+
+RUN make build
+
+CMD ["/app/build/magobot"]

@@ -9,3 +9,4 @@ tflearn_logs
 training_data
 .DS_Store
 checkpoint
+build

@@ -1,7 +1,9 @@
-package gelbooru
+package booru
 
 import (
+	"fmt"
 	"github.com/MagonxESP/MagoBot/utils"
+	"net/http"
 	"strconv"
 	"strings"
 )
@@ -40,14 +42,17 @@ type PostListRequest struct {
 	Id int
 	// Set to true for Json formatted response.
 	Json bool
+	// The Booru on will perform the request
+	Booru string
 }
 
-func NewPostListRequest(tags []string) *PostListRequest {
+func NewPostListRequest(booru string, tags []string) *PostListRequest {
 	return &PostListRequest{
 		Limit: 100,
 		Page:  1,
 		Tags:  tags,
 		Json:  true,
+		Booru: booru,
 	}
 }
 
@@ -59,7 +64,7 @@ func (p *PostListRequest) ToQueryString() string {
 	}
 
 	if p.Page != 0 {
-		params["page"] = strconv.Itoa(p.Page)
+		params["pid"] = strconv.Itoa(p.Page)
 	}
 
 	if len(p.Tags) > 0 {
@@ -81,6 +86,25 @@ func (p *PostListRequest) ToQueryString() string {
 	return strings.Join(utils.MapToKeyValueList(params, "="), "&")
 }
 
-func FetchPostList(limit int, page int, tags []string) {
-	// TODO poner constantes o algo para cambiar de origen de gelbooru y hacer el fetch de posts
+func GetPostList(request *PostListRequest) ([]Post, error) {
+	url := fmt.Sprintf(
+		"%s/index.php?page=dapi&s=post&q=index&%s",
+		request.Booru,
+		request.ToQueryString(),
+	)
+
+	response, err := http.Get(url)
+
+	if response.StatusCode != 200 {
+		return nil, NewPostRequestError(fmt.Sprintf("An error ocurred fetching the post list from %s", url))
+	}
+
+	var posts []Post
+	err = UnmarshalResponseBody(response.Body, &posts)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return posts, nil
 }

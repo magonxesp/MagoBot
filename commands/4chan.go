@@ -30,7 +30,22 @@ func sendRandomFileThreadOfBoard(board string, bot *tgbotapi.BotAPI, update *tgb
 		))
 	}
 
+	_, err = bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, utils.ThreadUrl(thread)))
+
+	if err != nil {
+		log.Println(err)
+	}
+
 	post, err := utils.RandomPostFromThread(thread)
+
+	if post.ImageURL() == "" {
+		for _, item := range thread.Posts {
+			if item.ImageURL() != "" {
+				post = item
+				break
+			}
+		}
+	}
 
 	if err != nil {
 		return bot.Send(tgbotapi.NewMessage(
@@ -39,7 +54,16 @@ func sendRandomFileThreadOfBoard(board string, bot *tgbotapi.BotAPI, update *tgb
 		))
 	}
 
-	return bot.Send(tgbotapi.NewPhotoUpload(update.Message.Chat.ID, post.ImageURL()))
+	bytes, err := utils.GetFileContentFromUrl(post.ImageURL())
+
+	if err != nil {
+		return bot.Send(tgbotapi.NewMessage(
+			update.Message.Chat.ID,
+			fmt.Sprintf("Ha ocurrido un error al recuperar el contenido del post o este no contiene una imagen"),
+		))
+	}
+
+	return bot.Send(tgbotapi.NewPhotoUpload(update.Message.Chat.ID, tgbotapi.FileBytes{Bytes: bytes}))
 }
 
 func ChanRandomWThreadCommandHandler(bot *tgbotapi.BotAPI, update *tgbotapi.Update) {

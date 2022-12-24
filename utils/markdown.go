@@ -6,5 +6,5 @@ import (
 )
 
 func MentionUserMd(user tgbotapi.User) string {
-	return fmt.Sprintf("[@{}](tg://user?id=%d)", user.ID)
+	return fmt.Sprintf("[@%s](tg://user?id=%d)", user.UserName, user.ID)
 }

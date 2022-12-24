@@ -1,19 +1,8 @@
 version: "3"
 
 services:
-  magobot:
+  bot:
     build: .
-    restart: always
-#    depends_on:
-#      - mysql
-#    links:
-#      - mysql
-
-#  mysql:
-#    image: mariadb:latest
-#    restart: always
-#    environment:
-#      MYSQL_DATABASE: 'magobot'
-#      MYSQL_USER: 'root'
-#      MYSQL_PASSWORD: 'root'
-#      MYSQL_ROOT_PASSWORD: 'root'
+    restart: unless-stopped
+    env_file:
+      - .env

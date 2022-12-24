@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"errors"
 	"fmt"
 	"github.com/moshee/go-4chan-api/api"
 )
@@ -33,11 +34,9 @@ func RandomThreadFromBoard(board string) (*api.Thread, error) {
 }
 
 func RandomPostFromThread(thread *api.Thread) (*api.Post, error) {
-	_, _, err := thread.Update()
-
-	if err != nil {
-		return nil, err
+	if len(thread.Posts) == 0 {
+		return nil, errors.New("empty posts array")
 	}
-	
+
 	return thread.Posts[RandomInt(0, len(thread.Posts)-1)], nil
 }

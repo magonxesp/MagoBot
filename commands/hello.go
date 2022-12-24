@@ -8,10 +8,14 @@ import (
 )
 
 func StartCommandHandler(bot *tgbotapi.BotAPI, update *tgbotapi.Update) {
-	_, err := bot.Send(tgbotapi.NewMessage(
+	message := tgbotapi.NewMessage(
 		update.Message.Chat.ID,
 		fmt.Sprintf("%s Hola k ase", utils.MentionUserMd(*update.Message.From)),
-	))
+	)
+
+	message.ParseMode = "markdown"
+
+	_, err := bot.Send(message)
 
 	if err != nil {
 		log.Fatal(err)
