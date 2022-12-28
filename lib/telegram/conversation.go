@@ -1,8 +1,9 @@
-package utils
+package telegram
 
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/MagonxESP/MagoBot/utils"
 	"github.com/google/uuid"
 	"time"
 )
@@ -30,8 +31,8 @@ func NewConversation(key string, chatId int64, userId int) *Conversation {
 func GetExistingConversation(key ConversationKey) (*Conversation, error) {
 	var conversation Conversation
 
-	client := CreateRedisClient()
-	encoded, err := client.Get(redisContext, string(key)).Result()
+	client := utils.CreateRedisClient()
+	encoded, err := client.Get(utils.RedisContext, string(key)).Result()
 
 	if err != nil {
 		return nil, err
@@ -65,8 +66,8 @@ func (c *Conversation) Save() error {
 		return err
 	}
 
-	client := CreateRedisClient()
-	err = client.Set(redisContext, string(GetConversationKey(c.ChatId, c.UserId)), encoded, 7*24*time.Hour).Err()
+	client := utils.CreateRedisClient()
+	err = client.Set(utils.RedisContext, string(GetConversationKey(c.ChatId, c.UserId)), encoded, 7*24*time.Hour).Err()
 
 	if err != nil {
 		return err

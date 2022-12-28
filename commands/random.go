@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"github.com/MagonxESP/MagoBot/lib/telegram"
 	"github.com/MagonxESP/MagoBot/utils"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"log"
@@ -10,7 +11,7 @@ import (
 func RollCommandHandler(bot *tgbotapi.BotAPI, update *tgbotapi.Update) {
 	max := 100
 
-	if arg, err := utils.GetCommandArgument(update, 0); err == nil {
+	if arg, err := telegram.GetCommandArgument(update, 0); err == nil {
 		if maxNumber, err := strconv.Atoi(arg); err == nil {
 			max = maxNumber
 		}

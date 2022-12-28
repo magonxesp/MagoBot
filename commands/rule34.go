@@ -3,6 +3,7 @@ package commands
 import (
 	"fmt"
 	"github.com/MagonxESP/MagoBot/lib/booru"
+	"github.com/MagonxESP/MagoBot/lib/telegram"
 	"github.com/MagonxESP/MagoBot/utils"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"log"
@@ -10,7 +11,7 @@ import (
 )
 
 func Rule34CommandHandler(bot *tgbotapi.BotAPI, update *tgbotapi.Update) {
-	request := booru.NewPostListRequest(booru.Rule34, utils.GetCommandArguments(update))
+	request := booru.NewPostListRequest(booru.Rule34, telegram.GetCommandArguments(update))
 	request.Page = utils.RandomInt(1, 100)
 	posts, err := booru.GetPostList(request)
 

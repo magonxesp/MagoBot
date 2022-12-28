@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-var redisContext = context.Background()
+var RedisContext = context.Background()
 
 func CreateRedisClient() *redis.Client {
 	return redis.NewClient(&redis.Options{

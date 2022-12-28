@@ -1,19 +1,19 @@
 package conversations
 
 import (
-	"github.com/MagonxESP/MagoBot/utils"
+	"github.com/MagonxESP/MagoBot/lib/telegram"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"log"
 )
 
-type ConversationHandler func(conversation *utils.Conversation, bot *tgbotapi.BotAPI, update *tgbotapi.Update)
+type ConversationHandler func(conversation *telegram.Conversation, bot *tgbotapi.BotAPI, update *tgbotapi.Update)
 
 var conversationHandler = map[string]ConversationHandler{
 	"drop": DropConversationHandler,
 }
 
 func HandleConversation(bot *tgbotapi.BotAPI, update *tgbotapi.Update) bool {
-	conversation, err := utils.GetExistingConversation(utils.GetConversationKey(update.Message.Chat.ID, update.Message.From.ID))
+	conversation, err := telegram.GetExistingConversation(telegram.GetConversationKey(update.Message.Chat.ID, update.Message.From.ID))
 
 	if err != nil {
 		log.Println(err)
