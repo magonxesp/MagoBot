@@ -12,9 +12,9 @@ Requiere Go >= 1.19
     ```shell script
     $ cp .env.template .env
     ```
-3. Añadir la variable de entorno ``TOKEN`` en el fichero ``.env``
+3. Añadir la variable de entorno ``MAGOBOT_TOKEN`` en el fichero ``.env``
     ```shell script
-    TOKEN=bot_token
+    MAGOBOT_TOKEN=bot_token
     ```
 ## Arranque del bot   
 ### Con docker (recomendado)
