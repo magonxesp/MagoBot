@@ -2,13 +2,14 @@ package main
 
 import (
 	"github.com/MagonxESP/MagoBot/commands"
+	"github.com/MagonxESP/MagoBot/conversations"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"log"
 	"os"
 )
 
 func main() {
-	bot, err := tgbotapi.NewBotAPI(os.Getenv("TOKEN"))
+	bot, err := tgbotapi.NewBotAPI(os.Getenv("MAGOBOT_TOKEN"))
 
 	if err != nil {
 		log.Fatal(err)
@@ -27,6 +28,10 @@ func main() {
 
 	for update := range updates {
 		if commands.HandleCommand(bot, &update) {
+			continue
+		}
+
+		if conversations.HandleConversation(bot, &update) {
 			continue
 		}
 	}
