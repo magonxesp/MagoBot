@@ -83,12 +83,12 @@ func (c *Conversation) conversationValueKey(key string) string {
 	return fmt.Sprintf("conversation_%s_%s", c.Id, key)
 }
 
-func (c *Conversation) Set(key string, value string) error {
+func (c *Conversation) SetState(key string, value string) error {
 	client := helpers.GetRedisClient()
 	return client.Set(*helpers.GetRedisContext(), c.conversationValueKey(key), value, 7*24*time.Hour).Err()
 }
 
-func (c *Conversation) Get(key string) (string, error) {
+func (c *Conversation) GetState(key string) (string, error) {
 	client := helpers.GetRedisClient()
 	return client.Get(*helpers.GetRedisContext(), c.conversationValueKey(key)).Result()
 }
