@@ -1,8 +1,8 @@
 package commands
 
 import (
-	"github.com/MagonxESP/MagoBot/lib/telegram"
-	"github.com/MagonxESP/MagoBot/utils"
+	"github.com/MagonxESP/MagoBot/internal/infraestructure/helpers"
+	"github.com/MagonxESP/MagoBot/pkg/telegram"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"log"
 	"strconv"
@@ -17,7 +17,7 @@ func RollCommandHandler(bot *tgbotapi.BotAPI, update *tgbotapi.Update) {
 		}
 	}
 
-	_, err := bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, strconv.Itoa(utils.RandomInt(0, max))))
+	_, err := bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, strconv.Itoa(helpers.RandomInt(0, max))))
 
 	if err != nil {
 		log.Println(err)

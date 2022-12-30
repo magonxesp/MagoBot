@@ -1,7 +1,7 @@
 package telegram
 
 import (
-	"github.com/MagonxESP/MagoBot/utils"
+	"github.com/MagonxESP/MagoBot/internal/infraestructure/helpers"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"log"
 )
@@ -16,7 +16,7 @@ func sendErrorSticker(bot *tgbotapi.BotAPI, update *tgbotapi.Update) {
 		"CAACAgQAAxkBAAEbc95jrFvUrMcdgd7v1M1fFMvQCOAiggACBQMAAtkjZCElAfMvpD7j6iwE",
 	}
 
-	sticker := panicStickers[utils.RandomInt(0, len(panicStickers)-1)]
+	sticker := panicStickers[helpers.RandomInt(0, len(panicStickers)-1)]
 	_, err := bot.Send(tgbotapi.NewStickerShare(update.Message.Chat.ID, sticker))
 
 	if err != nil {
@@ -27,6 +27,15 @@ func sendErrorSticker(bot *tgbotapi.BotAPI, update *tgbotapi.Update) {
 func SendCommandErrorMessage(bot *tgbotapi.BotAPI, update *tgbotapi.Update) {
 	sendErrorSticker(bot, update)
 	_, err := bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, "Ha ocurrido un error durante la ejecución del comando, vuelve a intentarlo mas tarde."))
+
+	if err != nil {
+		log.Println(err)
+	}
+}
+
+func SendConversationNextStepErrorMessage(bot *tgbotapi.BotAPI, update *tgbotapi.Update) {
+	sendErrorSticker(bot, update)
+	_, err := bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, "Ha ocurrido un error al guardar el estado de la conversacion, vuelve a intentarlo mas tarde."))
 
 	if err != nil {
 		log.Println(err)

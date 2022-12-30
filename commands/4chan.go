@@ -2,13 +2,13 @@ package commands
 
 import (
 	"fmt"
-	"github.com/MagonxESP/MagoBot/utils"
+	"github.com/MagonxESP/MagoBot/internal/infraestructure/helpers"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"log"
 )
 
 func sendRandomThreadOfBoard(board string, bot *tgbotapi.BotAPI, update *tgbotapi.Update) (tgbotapi.Message, error) {
-	thread, err := utils.RandomThreadFromBoard(board)
+	thread, err := helpers.RandomThreadFromBoard(board)
 
 	if err != nil {
 		return bot.Send(tgbotapi.NewMessage(
@@ -17,11 +17,11 @@ func sendRandomThreadOfBoard(board string, bot *tgbotapi.BotAPI, update *tgbotap
 		))
 	}
 
-	return bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, utils.ThreadUrl(thread)))
+	return bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, helpers.ThreadUrl(thread)))
 }
 
 func sendRandomFileThreadOfBoard(board string, bot *tgbotapi.BotAPI, update *tgbotapi.Update) (tgbotapi.Message, error) {
-	thread, err := utils.RandomThreadFromBoard(board)
+	thread, err := helpers.RandomThreadFromBoard(board)
 
 	if err != nil {
 		return bot.Send(tgbotapi.NewMessage(
@@ -30,7 +30,7 @@ func sendRandomFileThreadOfBoard(board string, bot *tgbotapi.BotAPI, update *tgb
 		))
 	}
 
-	post, err := utils.RandomPostFromThread(thread)
+	post, err := helpers.RandomPostFromThread(thread)
 
 	if err != nil {
 		return bot.Send(tgbotapi.NewMessage(
@@ -39,7 +39,7 @@ func sendRandomFileThreadOfBoard(board string, bot *tgbotapi.BotAPI, update *tgb
 		))
 	}
 
-	message, err := bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, utils.PostUrl(post)))
+	message, err := bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, helpers.PostUrl(post)))
 
 	if post.ImageURL() != "" {
 		message, err = bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, post.ImageURL()))

@@ -2,7 +2,7 @@ package booru
 
 import (
 	"fmt"
-	"github.com/MagonxESP/MagoBot/utils"
+	"github.com/MagonxESP/MagoBot/internal/infraestructure/helpers"
 	"net/http"
 	"strconv"
 	"strings"
@@ -83,7 +83,7 @@ func (p *PostListRequest) ToQueryString() string {
 		params["json"] = "1"
 	}
 
-	return strings.Join(utils.MapToKeyValueList(params, "="), "&")
+	return strings.Join(helpers.MapToKeyValueList(params, "="), "&")
 }
 
 func GetPostList(request *PostListRequest) ([]Post, error) {

@@ -2,9 +2,9 @@ package commands
 
 import (
 	"fmt"
-	"github.com/MagonxESP/MagoBot/lib/booru"
-	"github.com/MagonxESP/MagoBot/lib/telegram"
-	"github.com/MagonxESP/MagoBot/utils"
+	"github.com/MagonxESP/MagoBot/internal/infraestructure/helpers"
+	"github.com/MagonxESP/MagoBot/pkg/booru"
+	"github.com/MagonxESP/MagoBot/pkg/telegram"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"log"
 	"strings"
@@ -12,7 +12,7 @@ import (
 
 func Rule34CommandHandler(bot *tgbotapi.BotAPI, update *tgbotapi.Update) {
 	request := booru.NewPostListRequest(booru.Rule34, telegram.GetCommandArguments(update))
-	request.Page = utils.RandomInt(1, 100)
+	request.Page = helpers.RandomInt(1, 100)
 	posts, err := booru.GetPostList(request)
 
 	if err != nil {
@@ -43,7 +43,7 @@ func Rule34CommandHandler(bot *tgbotapi.BotAPI, update *tgbotapi.Update) {
 		return
 	}
 
-	post := posts[utils.RandomInt(0, len(posts)-1)]
+	post := posts[helpers.RandomInt(0, len(posts)-1)]
 	_, err = bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, post.FileUrl))
 
 	if err != nil {
