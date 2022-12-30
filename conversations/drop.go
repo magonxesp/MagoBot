@@ -29,14 +29,17 @@ func DropConversationStep0(conversation *telegram.Conversation, bot *tgbotapi.Bo
 		return fmt.Errorf("message %s is an invalid url", url)
 	}
 
-	err = conversation.Set("url", url)
+	if err = conversation.SetState("url", url); err != nil {
+		return err
+	}
+
 	if _, err := bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, "En que bucket lo quieres guardar?")); err != nil {
 		log.Println(err)
 	}
 
-	if err != nil {
-		return err
-	}
+	return nil
+}
 
+func DropConversationStep1(conversation *telegram.Conversation, bot *tgbotapi.BotAPI, update *tgbotapi.Update) error {
 	return nil
 }
