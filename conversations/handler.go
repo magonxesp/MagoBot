@@ -1,7 +1,7 @@
 package conversations
 
 import (
-	"github.com/MagonxESP/MagoBot/lib/telegram"
+	"github.com/MagonxESP/MagoBot/pkg/telegram"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"log"
 )
