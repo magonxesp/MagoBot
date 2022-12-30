@@ -1,12 +1,8 @@
 .idea
-venv
-*/__pycache__
-__pycache__
 .env
-*/.env
-tf_models
-tflearn_logs
-training_data
+.env.*
+!.env.example
+!.env.mongodb.example
 .DS_Store
-checkpoint
 build
+docker-compose.*.yml
