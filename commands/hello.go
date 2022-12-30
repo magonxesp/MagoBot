@@ -2,7 +2,7 @@ package commands
 
 import (
 	"fmt"
-	"github.com/MagonxESP/MagoBot/utils"
+	"github.com/MagonxESP/MagoBot/internal/infraestructure/helpers"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"log"
 )
@@ -10,7 +10,7 @@ import (
 func StartCommandHandler(bot *tgbotapi.BotAPI, update *tgbotapi.Update) {
 	message := tgbotapi.NewMessage(
 		update.Message.Chat.ID,
-		fmt.Sprintf("%s Hola k ase", utils.MentionUserMd(*update.Message.From)),
+		fmt.Sprintf("%s Hola k ase", helpers.MentionUserMd(*update.Message.From)),
 	)
 
 	message.ParseMode = "markdown"
