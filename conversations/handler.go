@@ -9,7 +9,8 @@ import (
 type ConversationHandler func(conversation *telegram.Conversation, bot *tgbotapi.BotAPI, update *tgbotapi.Update)
 
 var conversationHandler = map[string]ConversationHandler{
-	"drop": DropConversationHandler,
+	"drop":           DropConversationHandler,
+	"dropper_config": DropperConfigConversationHandler,
 }
 
 func HandleConversation(bot *tgbotapi.BotAPI, update *tgbotapi.Update) bool {

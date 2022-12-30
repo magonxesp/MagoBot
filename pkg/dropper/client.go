@@ -86,6 +86,10 @@ func (c *Client) Authenticate() error {
 		nil,
 	)
 
+	if err != nil {
+		return err
+	}
+
 	if response.StatusCode != 200 {
 		return fmt.Errorf("an error occurred during authentication, status code %d", response.StatusCode)
 	}

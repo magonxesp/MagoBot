@@ -104,7 +104,18 @@ func (c *Conversation) HandleConversationStep(stepHandler map[int]ConversationSt
 			return
 		}
 
-		c.NextStep()
+		if len(stepHandler) > c.Step {
+			c.NextStep()
+		}
+
+		if len(stepHandler) == c.Step {
+			client := helpers.GetRedisClient()
+			if err := client.Del(*helpers.GetRedisContext(), string(GetConversationKey(c.ChatId, c.UserId))).Err(); err != nil {
+				log.Println(err)
+			}
+
+			return
+		}
 
 		if err = c.Save(); err != nil {
 			SendConversationNextStepErrorMessage(bot, update)

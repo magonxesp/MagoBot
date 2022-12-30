@@ -13,6 +13,7 @@ var handlers = map[string]CommandHandler{
 	"4chanrandomhentaithread": ChanRandomHentaiThreadCommandHandler,
 	"4chanrandomecchithread":  ChanRandomEcchiThreadCommandHandler,
 	"drop":                    DropCommandHandler,
+	"configdropper":           DropperConfigCommandHandler,
 }
 
 // HandleCommand Handles an incoming command it returns true if a command is handled or false if not

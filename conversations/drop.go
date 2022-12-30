@@ -41,5 +41,6 @@ func DropConversationStep0(conversation *telegram.Conversation, bot *tgbotapi.Bo
 }
 
 func DropConversationStep1(conversation *telegram.Conversation, bot *tgbotapi.BotAPI, update *tgbotapi.Update) error {
+
 	return nil
 }
