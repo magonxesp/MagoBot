@@ -42,3 +42,6 @@ Requiere Go >= 1.19
 * **/4chanrandombthread** - Muestra un thread aleatorio de 4chan del board B.
 * **/4chanrandomhentaithread** - Muestra un thread aleatorio de 4chan del board H ademas de una imagen aleatoria de algun post del thread aleatorio.
 * **/4chanrandomecchithread** - Muestra un thread aleatorio de 4chan del board E ademas de una imagen aleatoria de algun post del thread aleatorio.
+* **/drop** - Descarga el contenido de una url en un bucket en especifico.
+* **/configdropper** - Configura el acceso a un dropper para poder usar el comando /drop.
+* **/deletedropperconfig** - Elimina la configuracion actual del dropper.
