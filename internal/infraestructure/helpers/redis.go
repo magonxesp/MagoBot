@@ -16,6 +16,12 @@ func ConnectRedis() {
 		Password: os.Getenv("MAGOBOT_REDIS_PASSWORD"),
 		DB:       0,
 	})
+
+	_, err := redisClient.Ping(redisContext).Result()
+
+	if err != nil {
+		panic(err)
+	}
 }
 
 func DisconnectRedis() {
