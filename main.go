@@ -17,6 +17,10 @@ func main() {
 
 	helpers.ConnectMongodb()
 	defer helpers.DisconnectMongodb()
+
+	helpers.ConnectRedis()
+	defer helpers.DisconnectRedis()
+
 	bot, err := tgbotapi.NewBotAPI(os.Getenv("MAGOBOT_TOKEN"))
 
 	if err != nil {
