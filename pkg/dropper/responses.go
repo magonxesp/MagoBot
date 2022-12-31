@@ -7,6 +7,10 @@ type AuthorizationResponse struct {
 	TokenType   string `json:"token_type"`
 }
 
+type ResourceResponse[T interface{}] struct {
+	Data T `json:"data"`
+}
+
 type Bucket struct {
 	Name string `json:"name"`
 	Kind string `json:"kind"`

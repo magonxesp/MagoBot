@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"strings"
 )
@@ -56,6 +57,8 @@ func unmarshallRequestResponse[T interface{}](response *http.Response) (*T, erro
 	}
 
 	var decoded T
+	stringContent := string(content)
+	log.Println(stringContent)
 	err = json.Unmarshal(content, &decoded)
 
 	if err != nil {

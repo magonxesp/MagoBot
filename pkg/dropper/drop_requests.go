@@ -17,7 +17,7 @@ func (c *Client) Drop(source string, bucket *Bucket) error {
 		return err
 	}
 
-	response, err := c.request("POST", "/api/bucket/all", reader)
+	response, err := c.request("POST", "/api/drop", reader)
 
 	if err != nil {
 		return err

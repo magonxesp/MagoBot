@@ -1,6 +1,8 @@
 package dropper
 
-import "log"
+import (
+	"log"
+)
 
 func (c *Client) GetAllBuckets() ([]Bucket, error) {
 	response, err := c.request("GET", "/api/bucket/all", nil)
@@ -9,8 +11,14 @@ func (c *Client) GetAllBuckets() ([]Bucket, error) {
 		return nil, err
 	}
 
-	buckets, err := unmarshallRequestResponse[[]Bucket](response)
-	return *buckets, err
+	resource, err := unmarshallRequestResponse[ResourceResponse[[]Bucket]](response)
+
+	if err != nil {
+		return nil, err
+	}
+
+	buckets := resource.Data
+	return buckets, nil
 }
 
 func (c *Client) HasBuckets() bool {
