@@ -47,6 +47,7 @@ func DropperConfigCommandHandler(bot *tgbotapi.BotAPI, update *tgbotapi.Update) 
 	err := conversation.Save()
 
 	if err != nil {
+		log.Println(err)
 		telegram.SendCommandErrorMessage(bot, update)
 		return
 	}
