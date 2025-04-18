@@ -1,11 +1,18 @@
-FROM golang:1.19-alpine
+FROM golang:1.24-alpine AS builder
 
-WORKDIR /app
+WORKDIR /build
 
 RUN apk add --no-cache make
 
 COPY . .
 
-RUN make build
+RUN go build
 
-CMD ["/app/build/magobot"]
+FROM golang:1.24-alpine
+
+WORKDIR /app
+
+COPY --from=builder /build/MagoBot /app/MagoBot
+RUN chmod +x /app/MagoBot
+
+CMD ["/app/MagoBot"]

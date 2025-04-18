@@ -12,6 +12,7 @@ import (
 )
 
 func main() {
+	setupLogger()
 	if err := godotenv.Load(); err != nil {
 		slog.Warn("failed loading .env", "error", err)
 	}
@@ -48,4 +49,36 @@ func main() {
 			continue
 		}
 	}
+}
+
+func setupLogger() {
+	logJson := os.Getenv("MAGOBOT_LOG_JSON")
+	logLevel := os.Getenv("MAGOBOT_LOG_LEVEL")
+
+	var handler slog.Handler
+	var level slog.Level
+
+	if logLevel == "info" {
+		level = slog.LevelInfo
+	} else if logLevel == "warning" {
+		level = slog.LevelWarn
+	} else if logLevel == "error" {
+		level = slog.LevelError
+	} else {
+		level = slog.LevelDebug
+	}
+
+	if logJson == "true" {
+		handler = slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+			Level: level,
+		})
+
+	} else {
+		handler = slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+			Level: level,
+		})
+	}
+
+	logger := slog.New(handler)
+	slog.SetDefault(logger)
 }
