@@ -1,7 +1,7 @@
 # MagoBot
 MagoBot, un bot magico para telegram.
 
-Requiere Go >= 1.19
+Requiere Go >= 1.23
 
 ## Instalacion
 1. Clonar este repositorio
