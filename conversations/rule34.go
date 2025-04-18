@@ -30,7 +30,10 @@ func Rule34ConversationStep0(conversation *telegram.Conversation, bot *tgbotapi.
 		return err
 	}
 
-	request.Page = helpers.RandomInt(1, posts.Count/posts.Offset)
+	if posts.Offset > 0 {
+		request.Page = helpers.RandomInt(0, posts.Count/posts.Offset)
+	}
+
 	posts, err = booru.GetPostList(request)
 	if err != nil {
 		telegram.SendTextMessage(bot, update.Message.Chat.ID, fmt.Sprintf(
