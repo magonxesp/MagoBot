@@ -7,7 +7,7 @@ import (
 	"github.com/MagonxESP/MagoBot/commands"
 	"github.com/MagonxESP/MagoBot/conversations"
 	"github.com/MagonxESP/MagoBot/internal/infraestructure/helpers"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/joho/godotenv"
 )
 
@@ -33,15 +33,14 @@ func main() {
 	updateConfig := tgbotapi.NewUpdate(0)
 	updateConfig.Timeout = 60
 
-	updates, err := bot.GetUpdatesChan(updateConfig)
-
-	if err != nil {
-		slog.Error("failed creating updates channel", "error", err)
-		os.Exit(1)
-	}
+	updates := bot.GetUpdatesChan(updateConfig)
 
 	for update := range updates {
-		slog.Debug("handling message received", "message", update.Message.Text)
+		slog.Debug(
+			"handling message received",
+			"message", update.Message.Text,
+			"chat", update.Message.Chat.ID,
+		)
 
 		if commands.HandleCommand(bot, &update) {
 			slog.Debug("command handled", "message", update.Message.Text)

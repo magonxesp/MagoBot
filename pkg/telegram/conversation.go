@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/MagonxESP/MagoBot/internal/infraestructure/helpers"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/google/uuid"
 )
 
@@ -15,14 +15,14 @@ type Conversation struct {
 	Id     string `json:"id"`
 	Key    string `json:"key"`
 	ChatId int64  `json:"chat_id"`
-	UserId int    `json:"user_id"`
+	UserId int64  `json:"user_id"`
 	Step   int    `json:"step"`
 }
 
 type ConversationKey string
 type ConversationStepHandler func(conversation *Conversation, bot *tgbotapi.BotAPI, update *tgbotapi.Update) error
 
-func NewConversation(key string, chatId int64, userId int) *Conversation {
+func NewConversation(key string, chatId int64, userId int64) *Conversation {
 	return &Conversation{
 		Id:     uuid.New().String(),
 		Key:    key,
@@ -59,7 +59,7 @@ func GetExistingConversation(key ConversationKey) (*Conversation, error) {
 	return &conversation, nil
 }
 
-func GetConversationKey(chatId int64, userId int) ConversationKey {
+func GetConversationKey(chatId int64, userId int64) ConversationKey {
 	return ConversationKey(fmt.Sprintf("conversation_%d_%d", chatId, userId))
 }
 

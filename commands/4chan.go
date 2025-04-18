@@ -5,7 +5,7 @@ import (
 	"log/slog"
 
 	"github.com/MagonxESP/MagoBot/internal/infraestructure/helpers"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
 func sendRandomThreadOfBoard(board string, bot *tgbotapi.BotAPI, update *tgbotapi.Update) (tgbotapi.Message, error) {

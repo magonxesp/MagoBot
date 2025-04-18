@@ -11,10 +11,10 @@ type DropperConfigDocument struct {
 	Url          string             `bson:"url"`
 	ClientId     string             `bson:"client_id"`
 	ClientSecret string             `bson:"client_secret"`
-	UserId       int                `bson:"user_id"`
+	UserId       int64              `bson:"user_id"`
 }
 
-func NewDropperConfigDocument(id string, url string, clientId string, clientSecret string, userId int) *DropperConfigDocument {
+func NewDropperConfigDocument(id string, url string, clientId string, clientSecret string, userId int64) *DropperConfigDocument {
 	return &DropperConfigDocument{
 		Id:           id,
 		DocumentId:   primitive.NewObjectID(),

@@ -12,6 +12,6 @@ func NewDropperConfigFinder(repository domain.DropperConfigRepository) *DropperC
 	}
 }
 
-func (dc *DropperConfigFinder) FindByUserId(userId int) (*domain.DropperConfig, error) {
+func (dc *DropperConfigFinder) FindByUserId(userId int64) (*domain.DropperConfig, error) {
 	return dc.Repository.FindByUserId(userId)
 }

@@ -2,7 +2,7 @@ package commands
 
 import (
 	"github.com/MagonxESP/MagoBot/pkg/telegram"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
 func Rule34CommandHandler(bot *tgbotapi.BotAPI, update *tgbotapi.Update) {

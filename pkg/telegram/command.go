@@ -3,8 +3,9 @@ package telegram
 import (
 	"errors"
 	"fmt"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"strings"
+
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
 func GetCommandArguments(update *tgbotapi.Update) []string {
