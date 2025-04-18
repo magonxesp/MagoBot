@@ -25,6 +25,10 @@ func main() {
 
 	bot, err := tgbotapi.NewBotAPI(os.Getenv("MAGOBOT_TOKEN"))
 
+	if os.Getenv("MAGOBOT_LOG_LEVEL") == "debug" || os.Getenv("MAGOBOT_LOG_LEVEL") == "" {
+		bot.Debug = true
+	}
+
 	if err != nil {
 		slog.Error("failed creating bot instance", "error", err)
 		os.Exit(1)
@@ -38,19 +42,36 @@ func main() {
 	for update := range updates {
 		slog.Debug(
 			"handling message received",
+			"id", update.UpdateID,
 			"message", update.Message.Text,
 			"chat", update.Message.Chat.ID,
+			"type", update.Message.Chat.Type,
 		)
+		HandleMessage(bot, &update)
+	}
+}
 
-		if commands.HandleCommand(bot, &update) {
-			slog.Debug("command handled", "message", update.Message.Text)
-			continue
-		}
+func HandleMessage(bot *tgbotapi.BotAPI, update *tgbotapi.Update) {
+	if commands.HandleCommand(bot, update) {
+		slog.Debug(
+			"command handled",
+			"id", update.UpdateID,
+			"message", update.Message.Text,
+			"chat", update.Message.Chat.ID,
+			"type", update.Message.Chat.Type,
+		)
+		return
+	}
 
-		if conversations.HandleConversation(bot, &update) {
-			slog.Debug("conversation handled", "message", update.Message.Text)
-			continue
-		}
+	if conversations.HandleConversation(bot, update) {
+		slog.Debug(
+			"conversation handled",
+			"id", update.UpdateID,
+			"message", update.Message.Text,
+			"chat", update.Message.Chat.ID,
+			"type", update.Message.Chat.Type,
+		)
+		return
 	}
 }
 
