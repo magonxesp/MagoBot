@@ -1,9 +1,10 @@
 package telegram
 
 import (
+	"log/slog"
+
 	"github.com/MagonxESP/MagoBot/internal/infraestructure/helpers"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
-	"log"
 )
 
 func sendErrorSticker(bot *tgbotapi.BotAPI, update *tgbotapi.Update) {
@@ -20,7 +21,7 @@ func sendErrorSticker(bot *tgbotapi.BotAPI, update *tgbotapi.Update) {
 	_, err := bot.Send(tgbotapi.NewStickerShare(update.Message.Chat.ID, sticker))
 
 	if err != nil {
-		log.Println(err)
+		slog.Warn("failed sending error sticker", "error", err)
 	}
 }
 
@@ -29,7 +30,7 @@ func SendCommandErrorMessage(bot *tgbotapi.BotAPI, update *tgbotapi.Update) {
 	_, err := bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, "Ha ocurrido un error durante la ejecución del comando, vuelve a intentarlo mas tarde."))
 
 	if err != nil {
-		log.Println(err)
+		slog.Warn("failed sending command error message", "error", err)
 	}
 }
 
@@ -38,6 +39,6 @@ func SendConversationNextStepErrorMessage(bot *tgbotapi.BotAPI, update *tgbotapi
 	_, err := bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, "Ha ocurrido un error al guardar el estado de la conversacion, vuelve a intentarlo mas tarde."))
 
 	if err != nil {
-		log.Println(err)
+		slog.Warn("failed sending conversation state save error message", "error", err)
 	}
 }

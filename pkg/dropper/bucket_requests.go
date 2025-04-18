@@ -1,7 +1,7 @@
 package dropper
 
 import (
-	"log"
+	"log/slog"
 )
 
 func (c *Client) GetAllBuckets() ([]Bucket, error) {
@@ -25,7 +25,7 @@ func (c *Client) HasBuckets() bool {
 	buckets, err := c.GetAllBuckets()
 
 	if err != nil {
-		log.Println(err)
+		slog.Warn("failed fetching dropper buckets", "error", err)
 		return false
 	}
 

@@ -1,18 +1,20 @@
 package main
 
 import (
+	"log/slog"
+	"os"
+
 	"github.com/MagonxESP/MagoBot/commands"
 	"github.com/MagonxESP/MagoBot/conversations"
 	"github.com/MagonxESP/MagoBot/internal/infraestructure/helpers"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/joho/godotenv"
-	"log"
-	"os"
 )
 
 func main() {
+	setupLogger()
 	if err := godotenv.Load(); err != nil {
-		log.Println(err)
+		slog.Warn("failed loading .env", "error", err)
 	}
 
 	helpers.ConnectMongodb()
@@ -24,8 +26,8 @@ func main() {
 	bot, err := tgbotapi.NewBotAPI(os.Getenv("MAGOBOT_TOKEN"))
 
 	if err != nil {
-		log.Fatal(err)
-		return
+		slog.Error("failed creating bot instance", "error", err)
+		os.Exit(1)
 	}
 
 	updateConfig := tgbotapi.NewUpdate(0)
@@ -34,8 +36,8 @@ func main() {
 	updates, err := bot.GetUpdatesChan(updateConfig)
 
 	if err != nil {
-		log.Fatal(err)
-		return
+		slog.Error("failed creating updates channel", "error", err)
+		os.Exit(1)
 	}
 
 	for update := range updates {
@@ -47,4 +49,36 @@ func main() {
 			continue
 		}
 	}
+}
+
+func setupLogger() {
+	logJson := os.Getenv("MAGOBOT_LOG_JSON")
+	logLevel := os.Getenv("MAGOBOT_LOG_LEVEL")
+
+	var handler slog.Handler
+	var level slog.Level
+
+	if logLevel == "info" {
+		level = slog.LevelInfo
+	} else if logLevel == "warning" {
+		level = slog.LevelWarn
+	} else if logLevel == "error" {
+		level = slog.LevelError
+	} else {
+		level = slog.LevelDebug
+	}
+
+	if logJson == "true" {
+		handler = slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+			Level: level,
+		})
+
+	} else {
+		handler = slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+			Level: level,
+		})
+	}
+
+	logger := slog.New(handler)
+	slog.SetDefault(logger)
 }

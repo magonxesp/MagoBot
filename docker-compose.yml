@@ -3,17 +3,14 @@ version: "3"
 services:
   bot:
     build: .
-    restart: unless-stopped
     env_file:
       - .env
 
   redis:
     image: redis:7.0.7-alpine
-    restart: unless-stopped
 
   mongodb:
     image: mongo:4.4.13
-    restart: unless-stopped
     volumes:
       - mongodb:/data/db
     env_file:
