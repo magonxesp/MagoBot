@@ -37,18 +37,22 @@ func GetExistingConversation(key ConversationKey) (*Conversation, error) {
 
 	client := helpers.GetRedisClient()
 	encoded, err := client.Get(*helpers.GetRedisContext(), string(key)).Result()
+	slog.Debug("get conversation", "content", encoded, "key", key)
 
 	if err != nil {
+		slog.Debug("failed getting conversation", "key", key, "error", err)
 		return nil, err
 	}
 
 	if encoded == "" {
+		slog.Debug("conversation has empty content", "key", key)
 		return nil, nil
 	}
 
 	err = json.Unmarshal([]byte(encoded), &conversation)
 
 	if err != nil {
+		slog.Debug("failed deserialize json conversation", "key", key, "error", err)
 		return nil, err
 	}
 
@@ -64,14 +68,16 @@ func (c *Conversation) NextStep() {
 }
 
 func (c *Conversation) Save() error {
+	key := string(GetConversationKey(c.ChatId, c.UserId))
 	encoded, err := json.Marshal(c)
+	slog.Debug("saving conversation", "content", encoded, "key", key)
 
 	if err != nil {
 		return err
 	}
 
 	client := helpers.GetRedisClient()
-	err = client.Set(*helpers.GetRedisContext(), string(GetConversationKey(c.ChatId, c.UserId)), encoded, 7*24*time.Hour).Err()
+	err = client.Set(*helpers.GetRedisContext(), key, encoded, 7*24*time.Hour).Err()
 
 	if err != nil {
 		return err

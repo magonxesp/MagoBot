@@ -41,11 +41,15 @@ func main() {
 	}
 
 	for update := range updates {
+		slog.Debug("handling message received", "message", update.Message.Text)
+
 		if commands.HandleCommand(bot, &update) {
+			slog.Debug("command handled", "message", update.Message.Text)
 			continue
 		}
 
 		if conversations.HandleConversation(bot, &update) {
+			slog.Debug("conversation handled", "message", update.Message.Text)
 			continue
 		}
 	}
