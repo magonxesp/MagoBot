@@ -1,5 +1,9 @@
 .env
 .env.*
+!.env.mongodb.example
 .git
 build
 .idea
+docker-compose.*.yml
+MagoBot
+MagoBot.exe
