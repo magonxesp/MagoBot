@@ -2,6 +2,7 @@ package application
 
 import (
 	"errors"
+
 	"github.com/MagonxESP/MagoBot/internal/domain"
 )
 
@@ -17,7 +18,7 @@ func NewDropperConfigDeleter(repository domain.DropperConfigRepository) *Dropper
 	}
 }
 
-func (dc *DropperConfigDeleter) DeleteUserConfig(userId int) error {
+func (dc *DropperConfigDeleter) DeleteUserConfig(userId int64) error {
 	config, err := dc.Repository.FindByUserId(userId)
 
 	if err != nil {

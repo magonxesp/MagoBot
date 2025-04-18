@@ -10,7 +10,7 @@ import (
 	"github.com/MagonxESP/MagoBot/internal/infraestructure/persistence/mongodb/repository"
 	"github.com/MagonxESP/MagoBot/pkg/dropper"
 	"github.com/MagonxESP/MagoBot/pkg/telegram"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"golang.org/x/exp/slices"
 	"golang.org/x/exp/slog"
 )

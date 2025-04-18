@@ -7,7 +7,7 @@ import (
 	"github.com/MagonxESP/MagoBot/commands"
 	"github.com/MagonxESP/MagoBot/conversations"
 	"github.com/MagonxESP/MagoBot/internal/infraestructure/helpers"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/joho/godotenv"
 )
 
@@ -25,6 +25,10 @@ func main() {
 
 	bot, err := tgbotapi.NewBotAPI(os.Getenv("MAGOBOT_TOKEN"))
 
+	if os.Getenv("MAGOBOT_LOG_LEVEL") == "debug" || os.Getenv("MAGOBOT_LOG_LEVEL") == "" {
+		bot.Debug = true
+	}
+
 	if err != nil {
 		slog.Error("failed creating bot instance", "error", err)
 		os.Exit(1)
@@ -33,21 +37,41 @@ func main() {
 	updateConfig := tgbotapi.NewUpdate(0)
 	updateConfig.Timeout = 60
 
-	updates, err := bot.GetUpdatesChan(updateConfig)
-
-	if err != nil {
-		slog.Error("failed creating updates channel", "error", err)
-		os.Exit(1)
-	}
+	updates := bot.GetUpdatesChan(updateConfig)
 
 	for update := range updates {
-		if commands.HandleCommand(bot, &update) {
-			continue
-		}
+		slog.Debug(
+			"handling message received",
+			"id", update.UpdateID,
+			"message", update.Message.Text,
+			"chat", update.Message.Chat.ID,
+			"type", update.Message.Chat.Type,
+		)
+		HandleMessage(bot, &update)
+	}
+}
 
-		if conversations.HandleConversation(bot, &update) {
-			continue
-		}
+func HandleMessage(bot *tgbotapi.BotAPI, update *tgbotapi.Update) {
+	if commands.HandleCommand(bot, update) {
+		slog.Debug(
+			"command handled",
+			"id", update.UpdateID,
+			"message", update.Message.Text,
+			"chat", update.Message.Chat.ID,
+			"type", update.Message.Chat.Type,
+		)
+		return
+	}
+
+	if conversations.HandleConversation(bot, update) {
+		slog.Debug(
+			"conversation handled",
+			"id", update.UpdateID,
+			"message", update.Message.Text,
+			"chat", update.Message.Chat.ID,
+			"type", update.Message.Chat.Type,
+		)
+		return
 	}
 }
 

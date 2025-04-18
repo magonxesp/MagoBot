@@ -2,7 +2,8 @@ package helpers
 
 import (
 	"fmt"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
 func MentionUserMd(user tgbotapi.User) string {

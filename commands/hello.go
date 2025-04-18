@@ -2,9 +2,10 @@ package commands
 
 import (
 	"fmt"
-	"github.com/MagonxESP/MagoBot/internal/infraestructure/helpers"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"log"
+
+	"github.com/MagonxESP/MagoBot/internal/infraestructure/helpers"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
 func StartCommandHandler(bot *tgbotapi.BotAPI, update *tgbotapi.Update) {

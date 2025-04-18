@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"errors"
+
 	"github.com/MagonxESP/MagoBot/internal/domain"
 	"github.com/MagonxESP/MagoBot/internal/infraestructure/helpers"
 	"github.com/MagonxESP/MagoBot/internal/infraestructure/persistence/mongodb/documents"
@@ -49,7 +50,7 @@ func (r *MongoDbDropperConfigRepository) FindById(id string) (*domain.DropperCon
 	return nil, nil
 }
 
-func (r *MongoDbDropperConfigRepository) FindByUserId(userId int) (*domain.DropperConfig, error) {
+func (r *MongoDbDropperConfigRepository) FindByUserId(userId int64) (*domain.DropperConfig, error) {
 	config, err := findOneByFieldValue("user_id", userId)
 
 	if err != nil {

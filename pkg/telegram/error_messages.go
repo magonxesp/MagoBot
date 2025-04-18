@@ -4,7 +4,7 @@ import (
 	"log/slog"
 
 	"github.com/MagonxESP/MagoBot/internal/infraestructure/helpers"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
 func sendErrorSticker(bot *tgbotapi.BotAPI, update *tgbotapi.Update) {
@@ -18,7 +18,8 @@ func sendErrorSticker(bot *tgbotapi.BotAPI, update *tgbotapi.Update) {
 	}
 
 	sticker := panicStickers[helpers.RandomInt(0, len(panicStickers)-1)]
-	_, err := bot.Send(tgbotapi.NewStickerShare(update.Message.Chat.ID, sticker))
+	file := tgbotapi.FileID(sticker)
+	_, err := bot.Send(tgbotapi.NewSticker(update.Message.Chat.ID, file))
 
 	if err != nil {
 		slog.Warn("failed sending error sticker", "error", err)

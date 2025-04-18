@@ -5,5 +5,5 @@ type DropperConfig struct {
 	Url          string
 	ClientId     string
 	ClientSecret string
-	UserId       int
+	UserId       int64
 }

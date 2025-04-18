@@ -8,7 +8,7 @@ import (
 	"github.com/MagonxESP/MagoBot/internal/infraestructure/helpers"
 	"github.com/MagonxESP/MagoBot/pkg/booru"
 	"github.com/MagonxESP/MagoBot/pkg/telegram"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
 func Rule34ConversationHandler(conversation *telegram.Conversation, bot *tgbotapi.BotAPI, update *tgbotapi.Update) {

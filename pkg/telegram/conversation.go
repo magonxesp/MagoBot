@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/MagonxESP/MagoBot/internal/infraestructure/helpers"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/google/uuid"
 )
 
@@ -15,14 +15,14 @@ type Conversation struct {
 	Id     string `json:"id"`
 	Key    string `json:"key"`
 	ChatId int64  `json:"chat_id"`
-	UserId int    `json:"user_id"`
+	UserId int64  `json:"user_id"`
 	Step   int    `json:"step"`
 }
 
 type ConversationKey string
 type ConversationStepHandler func(conversation *Conversation, bot *tgbotapi.BotAPI, update *tgbotapi.Update) error
 
-func NewConversation(key string, chatId int64, userId int) *Conversation {
+func NewConversation(key string, chatId int64, userId int64) *Conversation {
 	return &Conversation{
 		Id:     uuid.New().String(),
 		Key:    key,
@@ -37,25 +37,29 @@ func GetExistingConversation(key ConversationKey) (*Conversation, error) {
 
 	client := helpers.GetRedisClient()
 	encoded, err := client.Get(*helpers.GetRedisContext(), string(key)).Result()
+	slog.Debug("get conversation", "content", encoded, "key", key)
 
 	if err != nil {
+		slog.Debug("failed getting conversation", "key", key, "error", err)
 		return nil, err
 	}
 
 	if encoded == "" {
+		slog.Debug("conversation has empty content", "key", key)
 		return nil, nil
 	}
 
 	err = json.Unmarshal([]byte(encoded), &conversation)
 
 	if err != nil {
+		slog.Debug("failed deserialize json conversation", "key", key, "error", err)
 		return nil, err
 	}
 
 	return &conversation, nil
 }
 
-func GetConversationKey(chatId int64, userId int) ConversationKey {
+func GetConversationKey(chatId int64, userId int64) ConversationKey {
 	return ConversationKey(fmt.Sprintf("conversation_%d_%d", chatId, userId))
 }
 
@@ -64,14 +68,16 @@ func (c *Conversation) NextStep() {
 }
 
 func (c *Conversation) Save() error {
+	key := string(GetConversationKey(c.ChatId, c.UserId))
 	encoded, err := json.Marshal(c)
+	slog.Debug("saving conversation", "content", encoded, "key", key)
 
 	if err != nil {
 		return err
 	}
 
 	client := helpers.GetRedisClient()
-	err = client.Set(*helpers.GetRedisContext(), string(GetConversationKey(c.ChatId, c.UserId)), encoded, 7*24*time.Hour).Err()
+	err = client.Set(*helpers.GetRedisContext(), key, encoded, 7*24*time.Hour).Err()
 
 	if err != nil {
 		return err
