@@ -23,7 +23,7 @@ func RemoveAccents(s string) string {
 }
 
 func Slugify(str string) string {
-	regex := regexp.MustCompile(`[^A-Za-z0-9 \(\).]+`)
+	regex := regexp.MustCompile(`[^A-Za-z0-9.]+`)
 	result := RemoveAccents(str)
 	result = strings.ToLower(result)
 	result = strings.Trim(result, "")
