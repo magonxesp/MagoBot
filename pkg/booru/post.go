@@ -62,7 +62,7 @@ type PostListRequest struct {
 func NewPostListRequest(booru string, tags []string) *PostListRequest {
 	return &PostListRequest{
 		Limit: 100,
-		Page:  1,
+		Page:  0,
 		Tags:  tags,
 		Booru: booru,
 	}
