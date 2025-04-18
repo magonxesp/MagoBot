@@ -2,9 +2,10 @@ package commands
 
 import (
 	"fmt"
+	"log/slog"
+
 	"github.com/MagonxESP/MagoBot/internal/infraestructure/helpers"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
-	"log"
 )
 
 func sendRandomThreadOfBoard(board string, bot *tgbotapi.BotAPI, update *tgbotapi.Update) (tgbotapi.Message, error) {
@@ -50,24 +51,24 @@ func sendRandomFileThreadOfBoard(board string, bot *tgbotapi.BotAPI, update *tgb
 
 func ChanRandomWThreadCommandHandler(bot *tgbotapi.BotAPI, update *tgbotapi.Update) {
 	if _, err := sendRandomFileThreadOfBoard("w", bot, update); err != nil {
-		log.Println(err)
+		slog.Warn("failed sending random 'w' thread", "error", err)
 	}
 }
 
 func ChanRandomBThreadCommandHandler(bot *tgbotapi.BotAPI, update *tgbotapi.Update) {
 	if _, err := sendRandomThreadOfBoard("b", bot, update); err != nil {
-		log.Println(err)
+		slog.Warn("failed sending random 'b' thread", "error", err)
 	}
 }
 
 func ChanRandomHentaiThreadCommandHandler(bot *tgbotapi.BotAPI, update *tgbotapi.Update) {
 	if _, err := sendRandomFileThreadOfBoard("h", bot, update); err != nil {
-		log.Println(err)
+		slog.Warn("failed sending random 'h' thread", "error", err)
 	}
 }
 
 func ChanRandomEcchiThreadCommandHandler(bot *tgbotapi.BotAPI, update *tgbotapi.Update) {
 	if _, err := sendRandomFileThreadOfBoard("e", bot, update); err != nil {
-		log.Println(err)
+		slog.Warn("failed sending random 'e' thread", "error", err)
 	}
 }

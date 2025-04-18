@@ -1,32 +1,47 @@
 package booru
 
 import (
+	"encoding/xml"
 	"fmt"
-	"github.com/MagonxESP/MagoBot/internal/infraestructure/helpers"
+	"io"
 	"net/http"
 	"strconv"
 	"strings"
+
+	"github.com/MagonxESP/MagoBot/internal/infraestructure/helpers"
 )
 
+type Posts struct {
+	XMLName xml.Name `xml:"posts"`
+	Count   int      `xml:"count,attr"`
+	Offset  int      `xml:"offset,attr"`
+	Items   []Post   `xml:"post"`
+}
+
 type Post struct {
-	PreviewUrl   string `json:"preview_url"`
-	SampleUrl    string `json:"sample_url"`
-	FileUrl      string `json:"file_url"`
-	Directory    int64  `json:"directory"`
-	Hash         string `json:"hash"`
-	Height       int    `json:"height"`
-	Id           int64  `json:"id"`
-	Image        string `json:"image"`
-	Change       int    `json:"change"`
-	Owner        string `json:"owner"`
-	ParentId     int64  `json:"parentId"`
-	Rating       string `json:"rating"`
-	Sample       int    `json:"sample"`
-	SampleHeight int    `json:"sample_height"`
-	SampleWidth  int    `json:"sample_width"`
-	Score        int    `json:"score"`
-	Tags         string `json:"tags"`
-	Width        int    `json:"width"`
+	Height        int    `xml:"height,attr"`
+	Score         int    `xml:"score,attr"`
+	FileURL       string `xml:"file_url,attr"`
+	ParentID      string `xml:"parent_id,attr"`
+	SampleURL     string `xml:"sample_url,attr"`
+	SampleWidth   int    `xml:"sample_width,attr"`
+	SampleHeight  int    `xml:"sample_height,attr"`
+	PreviewURL    string `xml:"preview_url,attr"`
+	Rating        string `xml:"rating,attr"`
+	Tags          string `xml:"tags,attr"`
+	ID            int    `xml:"id,attr"`
+	Width         int    `xml:"width,attr"`
+	Change        int64  `xml:"change,attr"`
+	MD5           string `xml:"md5,attr"`
+	CreatorID     int    `xml:"creator_id,attr"`
+	HasChildren   bool   `xml:"has_children,attr"`
+	CreatedAt     string `xml:"created_at,attr"`
+	Status        string `xml:"status,attr"`
+	Source        string `xml:"source,attr"`
+	HasNotes      bool   `xml:"has_notes,attr"`
+	HasComments   bool   `xml:"has_comments,attr"`
+	PreviewWidth  int    `xml:"preview_width,attr"`
+	PreviewHeight int    `xml:"preview_height,attr"`
 }
 
 type PostListRequest struct {
@@ -40,8 +55,6 @@ type PostListRequest struct {
 	Cid int
 	// The post Id.
 	Id int
-	// Set to true for Json formatted response.
-	Json bool
 	// The Booru on will perform the request
 	Booru string
 }
@@ -51,7 +64,6 @@ func NewPostListRequest(booru string, tags []string) *PostListRequest {
 		Limit: 100,
 		Page:  1,
 		Tags:  tags,
-		Json:  true,
 		Booru: booru,
 	}
 }
@@ -79,14 +91,10 @@ func (p *PostListRequest) ToQueryString() string {
 		params["cid"] = strconv.Itoa(p.Id)
 	}
 
-	if p.Json != false {
-		params["json"] = "1"
-	}
-
 	return strings.Join(helpers.MapToKeyValueList(params, "="), "&")
 }
 
-func GetPostList(request *PostListRequest) ([]Post, error) {
+func GetPostList(request *PostListRequest) (*Posts, error) {
 	url := fmt.Sprintf(
 		"%s/index.php?page=dapi&s=post&q=index&%s",
 		request.Booru,
@@ -94,17 +102,36 @@ func GetPostList(request *PostListRequest) ([]Post, error) {
 	)
 
 	response, err := http.Get(url)
+	if err != nil {
+		return nil, err
+	}
 
 	if response.StatusCode != 200 {
 		return nil, NewPostRequestError(fmt.Sprintf("An error ocurred fetching the post list from %s", url))
 	}
 
-	var posts []Post
-	err = UnmarshalResponseBody(response.Body, &posts)
+	posts, err := deserializeResponse(response.Body)
 
 	if err != nil {
 		return nil, err
 	}
 
 	return posts, nil
+}
+
+func deserializeResponse(reader io.ReadCloser) (*Posts, error) {
+	var posts Posts
+	content, err := io.ReadAll(reader)
+
+	if err != nil {
+		return nil, err
+	}
+
+	err = xml.Unmarshal(content, &posts)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &posts, nil
 }

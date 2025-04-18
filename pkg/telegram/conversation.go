@@ -3,11 +3,12 @@ package telegram
 import (
 	"encoding/json"
 	"fmt"
+	"log/slog"
+	"time"
+
 	"github.com/MagonxESP/MagoBot/internal/infraestructure/helpers"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/google/uuid"
-	"log"
-	"time"
 )
 
 type Conversation struct {
@@ -100,7 +101,7 @@ func (c *Conversation) HandleConversationStep(stepHandler map[int]ConversationSt
 		err := handler(c, bot, update)
 
 		if err != nil {
-			log.Println(err)
+			slog.Warn("conversation step finished with error", "conversation_key", c.Key, "error", err)
 			return
 		}
 
@@ -111,7 +112,7 @@ func (c *Conversation) HandleConversationStep(stepHandler map[int]ConversationSt
 		if len(stepHandler) == c.Step {
 			client := helpers.GetRedisClient()
 			if err := client.Del(*helpers.GetRedisContext(), string(GetConversationKey(c.ChatId, c.UserId))).Err(); err != nil {
-				log.Println(err)
+				slog.Warn("failed removing conversation", "conversation_key", c.Key, "error", err)
 			}
 
 			return

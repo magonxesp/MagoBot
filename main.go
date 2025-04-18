@@ -1,18 +1,19 @@
 package main
 
 import (
+	"log/slog"
+	"os"
+
 	"github.com/MagonxESP/MagoBot/commands"
 	"github.com/MagonxESP/MagoBot/conversations"
 	"github.com/MagonxESP/MagoBot/internal/infraestructure/helpers"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/joho/godotenv"
-	"log"
-	"os"
 )
 
 func main() {
 	if err := godotenv.Load(); err != nil {
-		log.Println(err)
+		slog.Warn("failed loading .env", "error", err)
 	}
 
 	helpers.ConnectMongodb()
@@ -24,8 +25,8 @@ func main() {
 	bot, err := tgbotapi.NewBotAPI(os.Getenv("MAGOBOT_TOKEN"))
 
 	if err != nil {
-		log.Fatal(err)
-		return
+		slog.Error("failed creating bot instance", "error", err)
+		os.Exit(1)
 	}
 
 	updateConfig := tgbotapi.NewUpdate(0)
@@ -34,8 +35,8 @@ func main() {
 	updates, err := bot.GetUpdatesChan(updateConfig)
 
 	if err != nil {
-		log.Fatal(err)
-		return
+		slog.Error("failed creating updates channel", "error", err)
+		os.Exit(1)
 	}
 
 	for update := range updates {

@@ -2,6 +2,9 @@ package conversations
 
 import (
 	"errors"
+	"regexp"
+	"strings"
+
 	"github.com/MagonxESP/MagoBot/internal/application"
 	"github.com/MagonxESP/MagoBot/internal/domain"
 	"github.com/MagonxESP/MagoBot/internal/infraestructure/persistence/mongodb/repository"
@@ -9,9 +12,7 @@ import (
 	"github.com/MagonxESP/MagoBot/pkg/telegram"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/google/uuid"
-	"log"
-	"regexp"
-	"strings"
+	"golang.org/x/exp/slog"
 )
 
 func testDropperConnection(config *domain.DropperConfig) bool {
@@ -19,7 +20,7 @@ func testDropperConnection(config *domain.DropperConfig) bool {
 	err := client.Authenticate()
 
 	if err != nil {
-		log.Println(err)
+		slog.Warn("dropper connection failed", "client", config.ClientId, "url", config.Url, "error", err)
 		return false
 	}
 
@@ -43,10 +44,7 @@ func DropperConfigConversationStep0(conversation *telegram.Conversation, bot *tg
 		matches := lineRegex.FindSubmatch([]byte(line))
 
 		if matches == nil {
-			if _, err := bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, "El formato no es valido")); err != nil {
-				log.Println(err)
-			}
-
+			telegram.SendTextMessage(bot, update.Message.Chat.ID, "El formato no es valido")
 			return errors.New("invalid config format")
 		}
 
@@ -64,11 +62,7 @@ func DropperConfigConversationStep0(conversation *telegram.Conversation, bot *tg
 	if !testDropperConnection(config) {
 		message := "Algo esta mal en la configuracion, no se puede conectar o autenticar con el dropper. " +
 			"Revisa los credenciales e intentalo de nuevo"
-		if _, err := bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, message)); err != nil {
-			log.Println(err)
-			return nil
-		}
-
+		telegram.SendTextMessage(bot, update.Message.Chat.ID, message)
 		return errors.New("dropper wrong connection or invalid credentials")
 	}
 
@@ -76,26 +70,17 @@ func DropperConfigConversationStep0(conversation *telegram.Conversation, bot *tg
 	err := configurer.CreateNewConfig(config)
 
 	if err != nil && errors.Is(err, application.ExistingConfigError) {
-		if _, err := bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, "Ya hay configurado un dropper")); err != nil {
-			log.Println(err)
-		}
-
+		telegram.SendTextMessage(bot, update.Message.Chat.ID, "Ya hay configurado un dropper")
 		return nil
 	}
 
 	if err != nil {
-		if _, err := bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, "Ha ocurrido un error mientras se guardaba la configuracion, intentalo de nuevo mas tarde")); err != nil {
-			log.Println(err)
-		}
-
+		telegram.SendTextMessage(bot, update.Message.Chat.ID, "Ha ocurrido un error mientras se guardaba la configuracion, intentalo de nuevo mas tarde")
+		slog.Warn("failed saving dropper config", "error", err)
 		return err
 	}
 
 	telegram.SendOkSticker(bot, update)
-
-	if _, err := bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, "El dropper se ha configurado exitosamente")); err != nil {
-		log.Println(err)
-	}
-
+	telegram.SendTextMessage(bot, update.Message.Chat.ID, "El dropper se ha configurado exitosamente")
 	return nil
 }

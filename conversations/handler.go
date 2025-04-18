@@ -3,7 +3,7 @@ package conversations
 import (
 	"github.com/MagonxESP/MagoBot/pkg/telegram"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
-	"log"
+	"golang.org/x/exp/slog"
 )
 
 type ConversationHandler func(conversation *telegram.Conversation, bot *tgbotapi.BotAPI, update *tgbotapi.Update)
@@ -11,13 +11,15 @@ type ConversationHandler func(conversation *telegram.Conversation, bot *tgbotapi
 var conversationHandler = map[string]ConversationHandler{
 	"drop":           DropConversationHandler,
 	"dropper_config": DropperConfigConversationHandler,
+	"rule34":         Rule34ConversationHandler,
 }
 
 func HandleConversation(bot *tgbotapi.BotAPI, update *tgbotapi.Update) bool {
-	conversation, err := telegram.GetExistingConversation(telegram.GetConversationKey(update.Message.Chat.ID, update.Message.From.ID))
+	key := telegram.GetConversationKey(update.Message.Chat.ID, update.Message.From.ID)
+	conversation, err := telegram.GetExistingConversation(key)
 
 	if err != nil {
-		log.Println(err)
+		slog.Warn("failed retrieving conversation", "conversation_key", key, "error", err)
 		return false
 	}
 

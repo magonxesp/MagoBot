@@ -3,15 +3,16 @@ package conversations
 import (
 	"errors"
 	"fmt"
+	"regexp"
+	"strings"
+
 	"github.com/MagonxESP/MagoBot/internal/application"
 	"github.com/MagonxESP/MagoBot/internal/infraestructure/persistence/mongodb/repository"
 	"github.com/MagonxESP/MagoBot/pkg/dropper"
 	"github.com/MagonxESP/MagoBot/pkg/telegram"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"golang.org/x/exp/slices"
-	"log"
-	"regexp"
-	"strings"
+	"golang.org/x/exp/slog"
 )
 
 func DropConversationHandler(conversation *telegram.Conversation, bot *tgbotapi.BotAPI, update *tgbotapi.Update) {
@@ -49,11 +50,7 @@ func DropConversationStep0(conversation *telegram.Conversation, bot *tgbotapi.Bo
 	regex, err := regexp.Compile("^(https?:\\/\\/)([a-zA-Z0-9.]+)(\\/.*)$")
 
 	if !regex.Match([]byte(url)) {
-		message := fmt.Sprintf("%s no es una url valida", url)
-		if _, err := bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, message)); err != nil {
-			log.Println(err)
-		}
-
+		telegram.SendTextMessage(bot, update.Message.Chat.ID, fmt.Sprintf("%s no es una url valida", url))
 		return fmt.Errorf("message %s is an invalid url", url)
 	}
 
@@ -70,10 +67,7 @@ func DropConversationStep0(conversation *telegram.Conversation, bot *tgbotapi.Bo
 	buckets, err := client.GetAllBuckets()
 
 	if len(buckets) == 0 {
-		if _, err := bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, "el dropper no tiene buckets configurados")); err != nil {
-			log.Println(err)
-		}
-
+		telegram.SendTextMessage(bot, update.Message.Chat.ID, "el dropper no tiene buckets configurados")
 		return errors.New("missing dropper buckets")
 	}
 
@@ -92,13 +86,7 @@ func DropConversationStep0(conversation *telegram.Conversation, bot *tgbotapi.Bo
 		return err
 	}
 
-	message := tgbotapi.NewMessage(update.Message.Chat.ID, "En que bucket lo quieres guardar?")
-	message.ReplyMarkup = tgbotapi.NewReplyKeyboard(tgbotapi.NewKeyboardButtonRow(buttons...))
-
-	if _, err := bot.Send(message); err != nil {
-		log.Println(err)
-	}
-
+	telegram.SendKeyboard(bot, update.Message.Chat.ID, "En que bucket lo quieres guardar?", buttons)
 	return nil
 }
 
@@ -117,10 +105,7 @@ func DropConversationStep1(conversation *telegram.Conversation, bot *tgbotapi.Bo
 	}
 
 	if !slices.Contains(strings.Split(availableBuckets, ";"), bucketName) {
-		if _, err := bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("el bucket %s no existe", bucketName))); err != nil {
-			log.Println(err)
-		}
-
+		telegram.SendTextMessage(bot, update.Message.Chat.ID, fmt.Sprintf("el bucket %s no existe", bucketName))
 		return errors.New("wrong bucket name")
 	}
 
@@ -130,24 +115,28 @@ func DropConversationStep1(conversation *telegram.Conversation, bot *tgbotapi.Bo
 		return err
 	}
 
-	message := tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("Enviando peticion para descargar el contenido de la url %s al dropper", url))
-	message.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
-
-	if _, err := bot.Send(message); err != nil {
-		log.Println(err)
-	}
+	telegram.SendRemoveKeyboard(
+		bot,
+		update.Message.Chat.ID,
+		fmt.Sprintf("Enviando peticion para descargar el contenido de la url %s al dropper", url),
+	)
 
 	go func() {
 		if err := client.Drop(url, &dropper.Bucket{Name: bucketName}); err != nil {
-			if _, err := bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("Ha ocurrido un error mientras se estaba descargando el contenido de la url %s", url))); err != nil {
-				log.Println(err)
-			}
+			telegram.SendTextMessage(
+				bot,
+				update.Message.Chat.ID,
+				fmt.Sprintf("Ha ocurrido un error mientras se estaba descargando el contenido de la url %s", url),
+			)
+			slog.Warn("failed drop url on dropper bucket", "bucket", bucketName, "error", err)
 			return
 		}
 
-		if _, err := bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("El contenido de la url %s se ha descargado con exito en el bucket %s", url, bucketName))); err != nil {
-			log.Println(err)
-		}
+		telegram.SendTextMessage(
+			bot,
+			update.Message.Chat.ID,
+			fmt.Sprintf("El contenido de la url %s se ha descargado con exito en el bucket %s", url, bucketName),
+		)
 	}()
 
 	return nil

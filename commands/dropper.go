@@ -2,11 +2,12 @@ package commands
 
 import (
 	"errors"
+
 	"github.com/MagonxESP/MagoBot/internal/application"
 	"github.com/MagonxESP/MagoBot/internal/infraestructure/persistence/mongodb/repository"
 	"github.com/MagonxESP/MagoBot/pkg/telegram"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
-	"log"
+	"golang.org/x/exp/slog"
 )
 
 func DropCommandHandler(bot *tgbotapi.BotAPI, update *tgbotapi.Update) {
@@ -14,16 +15,12 @@ func DropCommandHandler(bot *tgbotapi.BotAPI, update *tgbotapi.Update) {
 	config, err := finder.FindByUserId(update.Message.From.ID)
 
 	if err != nil {
-		if _, err := bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, "Ha ocurrido un error mientras se cargaba la configuracion del dropper")); err != nil {
-			log.Println(err)
-		}
+		telegram.SendTextMessage(bot, update.Message.Chat.ID, "Ha ocurrido un error mientras se cargaba la configuracion del dropper")
 		return
 	}
 
 	if config == nil {
-		if _, err := bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, "No hay ningun dropper configurado, lanza el comando /configdropper para configurarlo")); err != nil {
-			log.Println(err)
-		}
+		telegram.SendTextMessage(bot, update.Message.Chat.ID, "No hay ningun dropper configurado, lanza el comando /configdropper para configurarlo")
 		return
 	}
 
@@ -35,11 +32,7 @@ func DropCommandHandler(bot *tgbotapi.BotAPI, update *tgbotapi.Update) {
 		return
 	}
 
-	_, err = bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, "Pasame el link que contenga el archivo que quieres guardar"))
-
-	if err != nil {
-		log.Println(err)
-	}
+	telegram.SendTextMessage(bot, update.Message.Chat.ID, "Pasame el link que contenga el archivo que quieres guardar")
 }
 
 func DropperConfigCommandHandler(bot *tgbotapi.BotAPI, update *tgbotapi.Update) {
@@ -47,7 +40,7 @@ func DropperConfigCommandHandler(bot *tgbotapi.BotAPI, update *tgbotapi.Update) 
 	err := conversation.Save()
 
 	if err != nil {
-		log.Println(err)
+		slog.Warn("failed saving dropper config conversation", "error", err)
 		telegram.SendCommandErrorMessage(bot, update)
 		return
 	}
@@ -57,11 +50,7 @@ func DropperConfigCommandHandler(bot *tgbotapi.BotAPI, update *tgbotapi.Update) 
 		"client_id: clientid\n" +
 		"client_secret: clientsecret"
 
-	_, err = bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, text))
-
-	if err != nil {
-		log.Println(err)
-	}
+	telegram.SendTextMessage(bot, update.Message.Chat.ID, text)
 }
 
 func DeleteDropperConfigCommandHandler(bot *tgbotapi.BotAPI, update *tgbotapi.Update) {
@@ -69,21 +58,15 @@ func DeleteDropperConfigCommandHandler(bot *tgbotapi.BotAPI, update *tgbotapi.Up
 	err := deleter.DeleteUserConfig(update.Message.From.ID)
 
 	if err != nil && errors.Is(err, application.NotConfigExistsError) {
-		if _, err = bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, "No tienes ninguna configuracion guardada")); err != nil {
-			log.Println(err)
-		}
+		telegram.SendTextMessage(bot, update.Message.Chat.ID, "No tienes ninguna configuracion guardada")
 		return
 	}
 
 	if err != nil {
-		if _, err = bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, "Ha ocurrido un error al eliminar la configuracion")); err != nil {
-			log.Println(err)
-		}
+		telegram.SendTextMessage(bot, update.Message.Chat.ID, "Ha ocurrido un error al eliminar la configuracion")
 		return
 	}
 
 	telegram.SendOkSticker(bot, update)
-	if _, err = bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, "Se ha eliminado la configuracion del dropper con exito")); err != nil {
-		log.Println(err)
-	}
+	telegram.SendTextMessage(bot, update.Message.Chat.ID, "Se ha eliminado la configuracion del dropper con exito")
 }
