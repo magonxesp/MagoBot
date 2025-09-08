@@ -4,6 +4,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io"
+	"log/slog"
 	"net/http"
 	"strconv"
 	"strings"
@@ -59,6 +60,8 @@ type PostListRequest struct {
 	Booru string
 	// The API Key if it is required for example for Rule34
 	ApiKey string
+	// The UserId that is the owner of the api key if it is required for example for Rule34
+	UserId string
 }
 
 func NewPostListRequest(booru string, tags []string) *PostListRequest {
@@ -70,16 +73,16 @@ func NewPostListRequest(booru string, tags []string) *PostListRequest {
 	}
 }
 
-func NewRule34PostListRequest(apiKey string, tags []string) *PostListRequest {
+func NewRule34PostListRequest(apiKey string, userId string, tags []string) *PostListRequest {
 	return &PostListRequest{
 		Limit: 100,
 		Page:  0,
 		Tags:  tags,
 		Booru: Rule34,
 		ApiKey: apiKey,
+		UserId: userId,
 	}
 }
-
 
 func (p *PostListRequest) ToQueryString() string {
 	params := map[string]string{}
@@ -108,6 +111,10 @@ func (p *PostListRequest) ToQueryString() string {
 		params["api_key"] = p.ApiKey
 	}
 
+	if p.UserId != "" {
+		params["user_id"] = p.UserId
+	}
+
 	return strings.Join(helpers.MapToKeyValueList(params, "="), "&")
 }
 
@@ -118,6 +125,7 @@ func GetPostList(request *PostListRequest) (*Posts, error) {
 		request.ToQueryString(),
 	)
 
+	slog.Debug("fetching booru posts", "url", url, "booru", request.Booru)
 	response, err := http.Get(url)
 	if err != nil {
 		return nil, err
@@ -127,25 +135,27 @@ func GetPostList(request *PostListRequest) (*Posts, error) {
 		return nil, NewPostRequestError(fmt.Sprintf("An error ocurred fetching the post list from %s", url))
 	}
 
-	posts, err := deserializeResponse(response.Body)
+	content, err := io.ReadAll(response.Body)
+	if err != nil {
+		slog.Warn("failed reading booru response body", "error", err, "url", request.Booru)
+		return nil, err
+	}
+
+	slog.Debug("booru response body", "body", string(content), "booru", request.Booru)
+	posts, err := deserializeResponse(content)
 
 	if err != nil {
+		slog.Warn("failed deserializing booru response body", "error", err, "booru", request.Booru)
 		return nil, err
 	}
 
 	return posts, nil
 }
 
-func deserializeResponse(reader io.ReadCloser) (*Posts, error) {
+func deserializeResponse(content []byte) (*Posts, error) {
 	var posts Posts
-	content, err := io.ReadAll(reader)
 
-	if err != nil {
-		return nil, err
-	}
-
-	err = xml.Unmarshal(content, &posts)
-
+	err := xml.Unmarshal(content, &posts)
 	if err != nil {
 		return nil, err
 	}
