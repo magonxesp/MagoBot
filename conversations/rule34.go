@@ -23,7 +23,8 @@ func Rule34ConversationStep0(conversation *telegram.Conversation, bot *tgbotapi.
 	tag := domain.Slugify(update.Message.Text)
 	slog.Debug("searhing rule34 posts", "tag", tag)
 
-	request := booru.NewPostListRequest(booru.Rule34, []string{tag})
+	apiKey := helpers.GetRule34ApiKey()
+	request := booru.NewRule34PostListRequest(apiKey, []string{tag})
 	posts, err := booru.GetPostList(request)
 
 	if err != nil {

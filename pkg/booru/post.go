@@ -57,6 +57,8 @@ type PostListRequest struct {
 	Id int
 	// The Booru on will perform the request
 	Booru string
+	// The API Key if it is required for example for Rule34
+	ApiKey string
 }
 
 func NewPostListRequest(booru string, tags []string) *PostListRequest {
@@ -67,6 +69,17 @@ func NewPostListRequest(booru string, tags []string) *PostListRequest {
 		Booru: booru,
 	}
 }
+
+func NewRule34PostListRequest(apiKey string, tags []string) *PostListRequest {
+	return &PostListRequest{
+		Limit: 100,
+		Page:  0,
+		Tags:  tags,
+		Booru: Rule34,
+		ApiKey: apiKey,
+	}
+}
+
 
 func (p *PostListRequest) ToQueryString() string {
 	params := map[string]string{}
@@ -89,6 +102,10 @@ func (p *PostListRequest) ToQueryString() string {
 
 	if p.Id != 0 {
 		params["cid"] = strconv.Itoa(p.Id)
+	}
+
+	if p.ApiKey != "" {
+		params["api_key"] = p.ApiKey
 	}
 
 	return strings.Join(helpers.MapToKeyValueList(params, "="), "&")
